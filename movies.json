@@ -1,0 +1,28 @@
+{
+  "movies": [
+    {
+      "title": "Inception",
+      "language": "English",
+      "genre": "Sci-Fi",
+      "release_date": "2010-07-16"
+    },
+    {
+      "title": "The Matrix",
+      "language": "English",
+      "genre": "Sci-Fi",
+      "release_date": "1999-03-31"
+    }
+  ],
+  "users": [
+    {
+      "username": "alice123",
+      "email": "alice@email.com",
+      "password": "securepassword1"
+    },
+    {
+      "username": "bob456",
+      "email": "bob@email.com",
+      "password": "securepassword2"
+    }
+  ]
+}
