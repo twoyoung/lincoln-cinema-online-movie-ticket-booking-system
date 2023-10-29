@@ -1,11 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from app import db
-from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, Refund, MovieStatus, ScreeningStatus
+from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, MovieStatus, ScreeningStatus
 from typing import List, Union
 from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
 from datetime import datetime
+from flask import session
 
 class General:
     @classmethod
@@ -42,14 +43,6 @@ class General:
             return Movie.query.filter(Movie.releaseDate.year == rYear).all()
         except NoResultFound:
             return []
-
-    # @classmethod
-    # def viewMovieDetails(cls, movieId: int) -> Movie:
-    #     try:
-    #         return Movie.query.get(movieId)
-    #     except NoResultFound:
-    #         return None
-        # print(f"Title: {aMovie.title}, Language: {aMovie.language}, Genre: {aMovie.genre}, Release Date: {aMovie.releaseDate}, durationMins: {aMovie.durationMins}, country: {aMovie.country}, description: {aMovie.description}")
 
 
 class Person(General):
@@ -100,10 +93,14 @@ class User(Person, db.Model):
     def login(self, username: str, password: str) -> bool:
         user = User.query.filter_by(username=username).first()
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            session['userId'] = user.id
+            session['userType'] = user.type
             return True
         return False
 
     def logout(self) -> bool:
+        session.pop('userId', None)
+        session.pop('userType', None)
         return True
     
     def resetPassword(self, newPassword: str) -> bool:
@@ -114,18 +111,45 @@ class User(Person, db.Model):
     def getUserById(userId: int) -> Union["FrontDeskStaff", "Customer", "Admin", "User"]:
         return User.query.get(userId)
 
+class BookingMixin:
+    def makeBooking(self, booking: Booking) -> bool:
+        seatIds = [seat.id for seat in booking.seats]
+        existingBooking = Booking.query.join(Booking.seats).filter(Booking.screeningId == booking.screeningId, 
+                       Booking.status != BookingStatus.CANCELLED, CinemaHallSeat.id.in_(seatIds)).first()
+        if not existingBooking:
+            db.session.add(booking)
+            db.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def cancelBooking(booking: Booking) -> bool:
+        existingBooking = Booking.query.get(booking.id)
+        if existingBooking.status == BookingStatus.CANCELLED:
+            return False
+        elif existingBooking and existingBooking.status == BookingStatus.PENDING:
+            existingBooking.status = BookingStatus.CANCELLED
+            db.session.commit()
+        elif existingBooking and existingBooking.status == BookingStatus.CONFIRMED:
+            existingBooking.status = BookingStatus.CANCELLED
+
+            refundAmount = existingBooking.payment.discountedAmount
+
+            "Refund".createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
+            db.session.commit()
+            return True
+        else:
+            return False
+
+
 class Admin(User):
 
     __mapper_args__ = {
         'polymorphic_identity': 'admin',
     }
 
-    def addMovie(self, newMovie: Movie):
-        existingMovie = None
-        try:
-            existingMovie = Movie.query.filter_by(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
-        except NoResultFound:
-            pass
+    def addMovie(self, newMovie: Movie) -> bool:
+        existingMovie = Movie.query.filter_by(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
 
         if not existingMovie:
             db.session.add(newMovie)
@@ -133,12 +157,8 @@ class Admin(User):
             return True
         return False
 
-    def addScreening(self, newScreening: Screening):
-        existingScreening = None
-        try:
-            existingScreening = Screening.query.filter_by(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
-        except NoResultFound:
-            pass
+    def addScreening(self, newScreening: Screening) -> bool:
+        existingScreening = Screening.query.filter_by(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
 
         if not existingScreening:
             db.session.add(newScreening)
@@ -181,49 +201,18 @@ class Admin(User):
             screening.status = ScreeningStatus.CANCELLED.value
 
             for booking in screening.bookings:
-                if booking.status != BookingStatus.CANCELLED:
+                success = BookingMixin.cancelBooking(booking)
 
-                    # label canceled for booking
-                    booking.status = BookingStatus.CANCELLED
+                if not success:
+                    continue
 
-                    # create refund for all bookings
-                    refundAmount = booking.payment.discountedAmount
-                    Refund.createRefund(booking.payment.id, refundAmount, "Booking Canceled")
-
-                    # notification customers who booked online
+                else:
                     if booking.user.type == "customer":
                         booking.sendNotification(action="canceled")
 
             db.session.commit()
             return "Screening and its bookings cancelled successfully."
 
-
-class BookingMixin:
-    
-    def makeBooking(self, booking: Booking) -> bool:
-        seatIds = [seat.id for seat in booking.seats]
-        existingBooking = Booking.query.join(Booking.seats).filter(Booking.screeningId == booking.screeningId, 
-                       Booking.status != BookingStatus.CANCELLED, CinemaHallSeat.id.in_(seatIds)).first()
-        if not existingBooking:
-            db.session.add(booking)
-            db.session.commit()
-            return True
-        return False
-    
-    def cancelBooking(self, booking: Booking) -> bool:
-        existingBooking = Booking.query.get(booking.bookingId)
-        if existingBooking and existingBooking.status == BookingStatus.PENDING:
-            existingBooking.status = BookingStatus.CANCELLED
-            db.session.commit()
-        elif existingBooking and existingBooking.status == BookingStatus.CONFIRMED:
-            existingBooking.status = BookingStatus.CANCELLED
-
-            refundAmount = existingBooking.payment.discountedAmount
-
-            Refund.createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
-            db.session.commit()
-            return True
-        return False
 
 class FrontDeskStaff(User, BookingMixin):
 

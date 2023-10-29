@@ -1,5 +1,25 @@
-from flask import Blueprint, jsonify, render_template, request, session
+from flask import Blueprint, request, session, url_for, redirect, flash
 from controllers import MovieController, AuthController
+from functools import wraps
+
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if 'userId' not in session:
+            return redirect(url_for('auth_bp.login'))
+        return f(*args, **kwargs)
+    return wrapper
+
+def admin_required(f):
+    @login_required
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get('userType') != 'admin':
+            flash("You do not have the required permissions to access this page.")
+            return redirect(url_for('movie_bp.showMovies'))
+        return f(*args, **kwargs)
+    return wrapper
+
 
 movie_bp = Blueprint('movies', __name__)
 auth_bp = Blueprint('auth', __name__)
@@ -30,6 +50,7 @@ def showMovieScreenings(movieId):
     return MovieController.viewMovieScreenings(movieId)
 
 @movie_bp.route('/book/<screeningId>/seats', methods=['GET', 'POST'])
+@login_required
 def selectSeats(screeningId):
     if request.method == 'POST':
         selectedSeats = request.form.getlist('selectedSeats')
@@ -37,6 +58,7 @@ def selectSeats(screeningId):
     return MovieController.viewSeatChart(screeningId)
 
 @movie_bp.route('/book/<bookingId>/payment/online', methods=['GET', 'POST'])
+@login_required
 def paymentOnline(bookingId):
     if request.method == 'POST':
         paymentMethod = request.form.get('paymentMethod')
@@ -65,6 +87,7 @@ def paymentOnline(bookingId):
     return MovieController.showPaymentPageOnline(bookingId=bookingId)
 
 @movie_bp.route('/book/<bookingId>/payment/onsite', methods=['GET', 'POST'])
+@login_required
 def paymentOnsite(bookingId):
     if request.method == 'POST':
         paymentMethod = request.form.get('paymentMethod')
@@ -89,47 +112,53 @@ def paymentOnsite(bookingId):
         return MovieController.processBooking(session['userId'], paymentData=paymentData)
     return MovieController.showPaymentPageInCinema(bookingId=bookingId)
 
-@movie_bp.route('/bookings', method=['GET'])
+@movie_bp.route('/bookings', methods=['GET'])
+@login_required
 def viewBookings():
     return MovieController.viewBookings(session['userId'])
 
 @movie_bp.route('/cancel/<bookingId>', methods=['POST'])
+@login_required
 def cancelBooking(bookingId):
     return MovieController.cancelBooking(session['userId'], bookingId)
 
 @movie_bp.route('/add/movie', methods=['GET', 'POST'])
+@admin_required
 def addMovie():
     if request.method == 'POST':
         newMovieData = {
-            "title": request.POST.get('title'),
-            "language": request.POST.get('language'),
-            "genre": request.POST.get('genre'),
-            "releaseDate": request.POST.get('releaseDate'),
-            "durationMins": request.POST.get('durationMins'),
-            "country": request.POST.get('country'),
-            "description": request.POST.get('description')
+            "title": request.form.get('title'),
+            "language": request.form.get('language'),
+            "genre": request.form.get('genre'),
+            "releaseDate": request.form.get('releaseDate'),
+            "durationMins": request.form.get('durationMins'),
+            "country": request.form.get('country'),
+            "description": request.form.get('description')
         }
         return MovieController.addMovie(session['userId'], newMovieData)
     return MovieController.showAddMoviePage()
 
 @movie_bp.route('/add/screening', methods=['GET', 'POST'])
+@admin_required
 def addScreening():
     if request.method == 'POST':
         newScreeningData = {
-            "screeningDate": request.POST.get('screeningDate'),
-            "startTime": request.POST.get('startTime'),
-            "endTime": request.POST.get('endTime'),
-            "hallId": request.POST.get('hallId'),
-            "MovieId": request.POST.get('movieId'),
+            "screeningDate": request.form.get('screeningDate'),
+            "startTime": request.form.get('startTime'),
+            "endTime": request.form.get('endTime'),
+            "hallId": request.form.get('hallId'),
+            "movieId": request.form.get('movieId'),
         }
         return MovieController.addScreening(session['userId'], newScreeningData)
     return MovieController.showAddScreeningPage()    
 
-@movie_bp.route('/cancel/movie/<movieId>', methods=['GET', 'POST'])
+@movie_bp.route('/cancel/movie/<movieId>', methods=['DELETE'])
+@admin_required
 def cancelMovie(movieId):
     return MovieController.cancelMovie(session['userId'], movieId)
 
-@movie_bp.route('/cancel/screening/<screeningId>', methods=['GET', 'POST'])
+@movie_bp.route('/cancel/screening/<screeningId>', methods=['DELETE'])
+@admin_required
 def cancelScreening(screeningId):
     return MovieController.cancelScreening(session['userId'], screeningId)
 
@@ -141,7 +170,7 @@ def signup():
         return AuthController.register(username, password)
     return AuthController.showSignup()
 
-@auth_bp.route('/login', method = ['GET', 'POST'])
+@auth_bp.route('/login', methods = ['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')

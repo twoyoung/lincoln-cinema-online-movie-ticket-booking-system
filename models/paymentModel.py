@@ -14,8 +14,9 @@ class Payment(db.Model):
     discountedAmount = db.Column(db.Float, nullable=False)
     createdOn = db.Column(db.DateTime, nullable=False)
     type = db.Column(db.String(50))
+    couponId = db.Column(db.String, db.ForeignKey('coupons.id'))
     coupon = relationship('Coupon', backref='payments')
-    bookingId = db.Column(db.Integer, db.ForeignKey('bookings.bookingId'))
+    bookingId = db.Column(db.Integer, db.ForeignKey('bookings.id'))
     booking = relationship('Booking', backref=backref('payment', uselist=False))
 
     __mapper_args__ = {
@@ -51,7 +52,7 @@ class CreditCard(Payment):
 
     id = db.Column(db.Integer, db.ForeignKey('payments.id'), primary_key=True)
     creditCardNumber = db.Column(db.String, nullable=False)
-    expiryDate = db.Column(db.DateTime, nullable=False)
+    expiryDate = db.Column(db.String, nullable=False)
     nameOnCard = db.Column(db.String, nullable=False)
 
     __mapper_args__ = {
@@ -81,7 +82,7 @@ class CashPayment(Payment):
         'polymorphic_identity': 'cash'
     }
 
-    def calChange(self) -> float:
+    def calcChange(self) -> float:
         return self.receivedCash - self.discountedAmount
 
 class Eftpos(Payment):
@@ -97,7 +98,7 @@ class Eftpos(Payment):
 class Coupon(db.Model):
     __tablename__ = 'coupons'
     
-    couponID = db.Column(db.String, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     expiryDate = db.Column(db.DateTime, nullable=False)
     discount = db.Column(db.Float, nullable=False)
 

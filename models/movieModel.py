@@ -3,7 +3,6 @@ from app import db
 from typing import List
 from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound
-from models import User
 
 class MovieStatus(Enum):
     ACTIVE = "active"
@@ -32,6 +31,8 @@ class Movie(db.Model):
     country = db.Column(db.String)
     description = db.Column(db.String)
     status = db.Column(db.Enum(MovieStatus), nullable=False)
+    # ratings
+    # posterImage
 
     screenings = relationship("Screening", backref="movie")
 
@@ -54,16 +55,13 @@ class Movie(db.Model):
     
     @staticmethod
     def getMovieById(movieId: int) -> "Movie":
-        try:
-            return Movie.query.get(movieId)
-        except NoResultFound:
-            return None
+        return Movie.query.get(movieId)
 
 # Define the Booking table
 class Booking(db.Model):
     __tablename__ = 'bookings'
     
-    bookingId = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey("users.id"))
     user = relationship('User', backref='bookings')
     numberOfSeats = db.Column(db.Integer, nullable=False)
@@ -86,11 +84,11 @@ class Booking(db.Model):
         return Booking.query.filter(Booking.status != BookingStatus.CANCELLED).all()
         
     def sendNotification(self, action: str = "booked") -> "Notification":
+        seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
         if action == "booked":
-            seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
-            message = f"Your booking with ID {self.bookingId} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} is confirmed. "
+            message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} is confirmed. "
         elif action == 'canceled':
-            message = f"Your booking with ID {self.bookingId} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} has been successfully canceled. "
+            message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} has been successfully canceled. "
         else:
             raise ValueError("Invalid action for notification")
         
@@ -98,7 +96,7 @@ class Booking(db.Model):
             userId = self.userId,
             message = message
         )
-        user = User.getUserById(self.userId)
+        user = "User".getUserById(self.userId)
         if user.type == 'customer':
             user.notifications.append(notification)
             db.session.add(notification)
@@ -120,21 +118,22 @@ class Screening(db.Model):
     movieId = db.Column(db.Integer, db.ForeignKey('movies.id'))
     movie = relationship('Movie', back_populates='screenings')
     hall = relationship('CinemaHall', back_populates='screenings')
-    bookings = relationship('Bookings', back_populates='screenings')
+    bookings = relationship('Booking', back_populates='screenings')
 
     def getSeatChart(self):
         allSeats = self.hall.seats
-        reservedSeats = [booking.seat for booking in self.bookings]
+        reservedSeats = []
+        for booking in self.bookings:
+            for seat in booking.seats:
+                reservedSeats.append(seat)
         seatChart = {
             'available': [seat for seat in allSeats if seat not in reservedSeats],
             'reserved': reservedSeats
         }
         return seatChart
     
-
-    
     @staticmethod
-    def getScreeningById(cls, screeningId: int) -> "Screening":
+    def getScreeningById(screeningId: int) -> "Screening":
         try:
             return Screening.query.get(screeningId)
         except NoResultFound:
@@ -164,7 +163,7 @@ class CinemaHallSeat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     seatRow = db.Column(db.String, nullable=False)
     seatColumn = db.Column(db.Integer, nullable=False)
-    seatType = db.Column(db.Integer, nullable=False)
+    seatType = db.Column(db.String, nullable=False)
     seatPrice = db.Column(db.Float, nullable=False)
     hallId = db.Column(db.Integer, db.ForeignKey('cinemaHalls.id'))
     

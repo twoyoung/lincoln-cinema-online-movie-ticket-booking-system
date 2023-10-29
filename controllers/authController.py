@@ -12,17 +12,17 @@ class AuthController:
         return render_template("login.html")
 
     @staticmethod
-    def register(self, username: str, password: str) -> bool:
-        return Guest.register(self, username, password)
+    def register(username: str, password: str) -> bool:
+        return Guest.register(username, password)
     
     @staticmethod
-    def login(self, username: str, password: str) -> bool:
-        return User.login(self, username, password)
+    def login(username: str, password: str) -> bool:
+        return User.login(username, password)
     
     @staticmethod
-    def logout(self) -> bool:
-        return User.logout(self)
+    def logout() -> bool:
+        return User.logout()
     
     @staticmethod
-    def resetPassword(self, password: str) -> bool:
-        return User.resetPassword(self, password)
+    def resetPassword(password: str) -> bool:
+        return User.resetPassword(password)

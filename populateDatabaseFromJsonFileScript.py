@@ -1,10 +1,11 @@
 import json
 from app import db
+from models import Movie, User
+
 
 
 # Populate the database from JSON file
 def populateDatabaseFromJson(filename):
-
     if filename == 'movies':
         with open(filename, 'r') as file:
             data = json.load(file)

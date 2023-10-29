@@ -1,8 +1,7 @@
-from flask import redirect, session, render_template, url_for
+from flask import redirect, render_template, url_for
 from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos
 from typing import List
 from datetime import datetime
-
 
 class MovieController:
     def browseMovies(self):
@@ -112,7 +111,7 @@ class MovieController:
                     booking = booking,
                 )
 
-            elif paymentData['paymentMethod'] == 'eftPost':
+            elif paymentData['paymentMethod'] == 'eftPos':
                 payment = CashPayment(
                     originalAmount = booking.orderTotal,
                     discountedAmount=booking.orderTotal,
@@ -133,7 +132,7 @@ class MovieController:
             
             Payment.createPayment(payment)
                 
-            return "Booking confirmed", 200
+            return "Booking confirmed", 201
 
         else:
             return "Invalid booking data", 400
@@ -150,7 +149,7 @@ class MovieController:
         booking = Booking.getBookingById(bookingId)
         user = User.getUserById(userId)
         if user.type == 'customer' or user.type == 'staff':
-            user.cancelBooking(booking)
+            return user.cancelBooking(booking)
 
     def showAddMoviePage(self):
         return render_template('addMovie.html')
@@ -169,7 +168,7 @@ class MovieController:
             )
             return user.addMovie(newMovie)
         else:
-            return "Unauthorized", 404
+            return "Unauthorized", 401
 
     def showAddScreeningPage(self):
         return render_template('addScreening.html')
@@ -186,27 +185,27 @@ class MovieController:
             )
             return user.addScreening(newScreening)
         else:
-            return "Unauthorized", 404
+            return "Unauthorized", 401
         
-    def cancelMovie(userId: int, movieId: int):
+    def cancelMovie(slef, userId: int, movieId: int):
         user = User.getUserById(userId)
         if user.type == 'admin':
             movie = Movie.getMovieById(movieId)
             return user.cancelMovie(movie)
         else:
-            return "Unauthorized", 404
+            return "Unauthorized", 401
         
-    def cancelScreening(userId: int, screeningId: int):
+    def cancelScreening(self, userId: int, screeningId: int):
         user = User.getUserById(userId)
         if user.type == 'admin':
             screening = Screening.getScreeningById(screeningId)
             return user.cancelScreening(screening)
         else:
-            return "Unauthorized", 404
+            return "Unauthorized", 401
 
 
         
-    
+
 
 
 
