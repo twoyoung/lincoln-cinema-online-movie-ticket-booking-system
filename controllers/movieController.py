@@ -1,5 +1,5 @@
 from flask import redirect, session, render_template, url_for
-from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus
+from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos
 from typing import List
 from datetime import datetime
 
@@ -37,12 +37,20 @@ class MovieController:
         
 
     def viewSeatChart(self, screeningId: int):
-        screening = General.getScreeningById(screeningId)
+        screening = Screening.getScreeningById(screeningId)
         if screening:
             seatChart = screening.getSeatChart()
             return render_template("seatChart.html", seatChart=seatChart)
         else:
             return "Screening not found", 404
+        
+    def showPaymentpageOnline(self, bookingId: int):
+        booking = Booking.getBookingById(bookingId)
+        return render_template("paymentOnline.html", booking=booking)
+    
+    def showPaymentpageOnsite(self, bookingId: int):
+        booking = Booking.getBookingById(bookingId)
+        return render_template("paymentOnsite.html", booking=booking)
 
     def processBooking(self, userId: int, screeningId: int = None, selectedSeats: List[CinemaHallSeat] = None, paymentData = None):
         user = User.getUserById(userId)
@@ -59,20 +67,74 @@ class MovieController:
             booking.orderTotal = sum(seat.seatPrice for seat in selectedSeats)
             booking.seats = selectedSeats
 
-            if user.type == 'staff' or user.type == 'customer':
-                user.makeBooking(booking)
-
             if user.type == 'customer':
-                return redirect(url_for('movie_bp.payment', bookingId = booking.bookingId))
+                user.makeBooking(booking)
+                return redirect(url_for('movie_bp.paymentOnline', bookingId = booking.bookingId))
+            elif user.type == 'staff':
+                user.makeBooking(booking)
+                return redirect(url_for('movie_bp.paymentOnsite', bookingId = booking.bookingId))
+            
         elif paymentData:
-            booking = Booking.query.get(paymentData['bookingId'])
+            booking = Booking.getBookingById(paymentData['bookingId'])
             if not booking:
                 return "Booking not found", 404
             
-            booking.status = BookingStatus.CONFIRMED
-            db.session.commit()
+            if paymentData['paymentMethod'] == 'creditcard':
+                payment = CreditCard(
+                    originalAmount=booking.orderTotal,
+                    discountedAmount=booking.orderTotal,
+                    createdOn = datetime.now(),
+                    type = paymentData['cardType'],
+                    bookingId = paymentData['bookingId'],
+                    booking = booking,
+                    creditCardNumber = paymentData['creditCardNumber'],
+                    expiryDate = paymentData['expiryDate'],
+                    nameOnCard = paymentData['nameOnCard'],
+                )
+            elif paymentData['paymentMethod'] == 'debitcard':
+                payment = DebitCard(
+                    originalAmount = booking.orderTotal,
+                    discountedAmount=booking.orderTotal,
+                    createdOn = datetime.now(),
+                    bookingId = paymentData['bookingId'],
+                    booking = booking,
+                    cardNumber = paymentData['cardNumber'],
+                    bankName = paymentData['bankName'],
+                    nameOnCard = paymentData['nameOnCard']
+                )
 
+            elif paymentData['paymentMethod'] == 'cash':
+                payment = CashPayment(
+                    originalAmount = booking.orderTotal,
+                    discountedAmount=booking.orderTotal,
+                    createdOn = datetime.now(),
+                    bookingId = paymentData['bookingId'],
+                    booking = booking,
+                )
+
+            elif paymentData['paymentMethod'] == 'eftPost':
+                payment = CashPayment(
+                    originalAmount = booking.orderTotal,
+                    discountedAmount=booking.orderTotal,
+                    createdOn = datetime.now(),
+                    bookingId = paymentData['bookingId'],
+                    booking = booking,
+                )
+
+            else:
+                return "Invalid payment method", 400
+            
+            if 'couponExpiryDate' in paymentData and 'couponDiscount' in paymentData:
+                coupon = Coupon(
+                    expiryDate = paymentData['couponExpiryDate'],
+                    discount=paymentData['couponDiscount']
+                )
+                payment.coupon = coupon
+            
+            Payment.createPayment(payment)
+                
             return "Booking confirmed", 200
+
         else:
             return "Invalid booking data", 400
             

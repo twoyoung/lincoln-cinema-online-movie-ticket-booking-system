@@ -1,0 +1,32 @@
+<form action="/book/{{ bookingId }}/payment" method="post">
+    <select id="paymentMethod" name="paymentMethod">
+        <option value="creditcard">Credit Card</option>
+        <option value="debitcard">Debit Card</option>
+    </select>
+    
+    <!-- Credit Card Fields -->
+    <div id="creditCardFields">
+        <input type="text" name="creditCardNumber" placeholder="Credit Card Number">
+        <!-- ... other credit card-specific fields ... -->
+    </div>
+
+    <!-- Debit Card Fields -->
+    <div id="debitCardFields" style="display: none;">
+        <input type="text" name="cardNumber" placeholder="Debit Card Number">
+        <!-- ... other debit card-specific fields ... -->
+    </div>
+
+    <input type="submit" value="Pay">
+</form>
+
+<script>
+    document.getElementById('paymentMethod').addEventListener('change', function() {
+        if (this.value == 'creditcard') {
+            document.getElementById('creditCardFields').style.display = '';
+            document.getElementById('debitCardFields').style.display = 'none';
+        } else {
+            document.getElementById('creditCardFields').style.display = 'none';
+            document.getElementById('debitCardFields').style.display = '';
+        }
+    });
+</script>

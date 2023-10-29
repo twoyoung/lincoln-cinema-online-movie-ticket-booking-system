@@ -56,13 +56,7 @@ class General:
             return Movie.query.get(movieId)
         except NoResultFound:
             return None
-        
-    @classmethod
-    def getScreeningById(cls, screeningId: int) -> Screening:
-        try:
-            return Screening.query.get(screeningId)
-        except NoResultFound:
-            return None
+
 
 class Person(General):
     name = db.Column(db.String)
@@ -142,7 +136,7 @@ class FrontDeskStaff(User):
 
 class Customer(User):
     bookings = db.relationship("Booking", backref='customer')
-
+    notifications = db.relationship("Notification", backref='customer')
     __mapper_args__ = {
         'polymorphic_identity': 'customer',
     }

@@ -2,6 +2,8 @@ from sqlalchemy.orm import relationship
 from app import db
 from typing import List
 from enum import Enum
+from sqlalchemy.orm.exc import NoResultFound
+
 
 # Define the Movie table
 class Movie(db.Model):
@@ -58,6 +60,24 @@ class Booking(db.Model):
 
     seats = relationship('CinemaHallSeat', backref='bookings')
 
+    @staticmethod
+    def getBookingById(cls, bookingId: int) -> "Booking":
+        try:
+            return Booking.query.get(bookingId)
+        except NoResultFound:
+            return None
+        
+    def sendNotification(self) -> "Notification":
+        seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
+        notification = Notification(
+            userId = self.userId,
+            message = f"Your booking with ID {self.bookingId} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers}is confirmed. "
+        )
+        user = "User".getUserById(self.userId)
+        if user.type == 'customer':
+            user.notifications.append(notification)
+
+
 
 class Screening(db.Model):
     __tablename__ = 'screenings'
@@ -82,12 +102,21 @@ class Screening(db.Model):
         }
         return seatChart
     
+
+    
+    @staticmethod
+    def getScreeningById(cls, screeningId: int) -> "Screening":
+        try:
+            return Screening.query.get(screeningId)
+        except NoResultFound:
+            return None
+    
 # Define the Notification table (assuming from previous discussion)
 class Notification(db.Model):
     __tablename__ = 'notifications'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    userId = db.Column(db.Integer, db.ForeignKey('users.id'))
     message = db.Column(db.String, nullable=False)
 
 class CinemaHall(db.Model):
@@ -116,59 +145,5 @@ class CinemaHallSeat(db.Model):
     def seatNumber(self):
         return f"{self.seatRow}{self.seatColumn}"
 
-
-class Payment(db.Model):
-    __tablename__ = 'payments'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Float, nullable=False)
-    createdOn = db.Column(db.DateTime, nullable=False)
-    type = db.Column(db.String(50))
-
-    __mapper_args__ = {
-        'polymorphic_on': type,
-        'polymorphic_identity': 'payment'
-    }
-
-    def calcDiscount(self) -> float:
-        if self.__cardType == "Student":
-            return self._amount * 0.2
-        return 0
-
-    def calcFinalPayment(self) -> float:
-        return self.amount - self.calcDiscount()
-    
-class CreditCard(Payment):
-    __tablename__ = 'creditcards'
-
-    id = db.Column(db.Integer, db.ForeignKey('payments.id'), primary_key=True)
-    creditCardNumber = db.Column(db.String, nullable=False)
-    cardType = db.Column(db.String, nullable=False)
-    expiryDate = db.Column(db.DateTime, nullable=False)
-    nameOnCard = db.Column(db.String, nullable=False)
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'creditcard'
-    }
-
-
-class DebitCard(Payment):
-    __tablename__ = 'debitcards'
-    
-    id = db.Column(db.Integer, db.ForeignKey('payments.id'), primary_key=True)
-    cardNumber = db.Column(db.String, nullable=False)
-    bankName = db.Column(db.String, nullable=False)
-    nameOnCard = db.Column(db.String, nullable=False)
-    
-    __mapper_args__ = {
-        'polymorphic_identity': 'debitcard'
-    }
-
-class Coupon(db.Model):
-    __tablename__ = 'coupons'
-    
-    couponID = db.Column(db.String, primary_key=True)
-    expiryDate = db.Column(db.DateTime, nullable=False)
-    discount = db.Column(db.Float, nullable=False)
 
 

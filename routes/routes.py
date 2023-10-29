@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request, session
 from controllers import MovieController, authController
 
 movie_bp = Blueprint('movies', __name__)
@@ -33,21 +33,63 @@ def showMovieScreenings(movieId):
 def selectSeats(screeningId):
     if request.method == 'POST':
         selectedSeats = request.form.getlist('selectedSeats')
-        return MovieController.processBooking(userId, screeningId=screeningId, selectedSeats=selectedSeats)   
+        return MovieController.processBooking(session['userId'], screeningId=screeningId, selectedSeats=selectedSeats)   
     return MovieController.viewSeatChart(screeningId)
 
-@movie_bp.route('/book/<bookingId>/payment', methods=['GET', 'POST'])
-def payment(bookingId):
+@movie_bp.route('/book/<bookingId>/payment/online', methods=['GET', 'POST'])
+def paymentOnline(bookingId):
     if request.method == 'POST':
-        pamentData = {
+        paymentMethod = request.form.get('paymentMethod')
+        useCoupon = request.form.get('useCoupon')
+        paymentData = {
             'bookingId': bookingId,
-            
+            'paymentMethod': paymentMethod
         }
-        return MovieController.processBooking(userId, pamentData=pamentData)
-    return MovieController.showPaymentPage()
+
+        if paymentMethod == 'creditcard':
+            paymentData['creditCardNumber'] = request.form.get('creditCardNumber')
+            paymentData['expiryDate'] = request.form.get('expiryDate')
+            paymentData['nameOnCard'] = request.form.get('nameOnCard')
+
+        elif paymentMethod == 'debitcard':
+            paymentData['cardNumber'] = request.form.get('cardNumber')
+            paymentData['bankName'] = request.form.get('bankName')
+            paymentData['nameOnCard'] = request.form.get('nameOnCard')
+
+        if useCoupon:
+            paymentData['couponExpiryDate'] = request.form.get('couponExpiryDate')
+            paymentData['couponDiscount'] = request.form.get('couponDiscount')
 
 
+        return MovieController.processBooking(session['userId'], paymentData=paymentData)
+    return MovieController.showPaymentPageOnline(bookingId=bookingId)
 
+@movie_bp.route('/book/<bookingId>/payment/onsite', methods=['GET', 'POST'])
+def paymentOnsite(bookingId):
+    if request.method == 'POST':
+        paymentMethod = request.form.get('paymentMethod')
+        useCoupon = request.form.get('useCoupon')
+
+        if paymentMethod == 'cash':
+            paymentData = {
+                'bookingId': bookingId,
+                'paymentMethod': paymentMethod,
+                'receivedCash': request.form.get('receivedCash')
+            }
+
+        elif paymentMethod == 'eftPost':
+            paymentData = {
+                'bookingId': bookingId,
+                'paymentMethod': paymentMethod,
+            }
+        if useCoupon:
+            paymentData['couponExpiryDate'] = request.form.get('couponExpiryDate')
+            paymentData['couponDiscount'] = request.form.get('couponDiscount')
+
+        return MovieController.processBooking(session['userId'], paymentData=paymentData)
+    return MovieController.showPaymentPageInCinema(bookingId=bookingId)
+
+@movie_bp.route('/cancel/')
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
