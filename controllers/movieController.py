@@ -137,6 +137,26 @@ class MovieController:
 
         else:
             return "Invalid booking data", 400
+        
+    def viewBookings(self, userId: int):
+        user = User.getUserById(userId)
+        if user.type == "customer":
+            return user.getBookingList()
+        if user.type == "staff":
+            return Booking.getBookingList()
+            
+        
+    def cancelBooking(self, userId: int, bookingId: int):
+        booking = Booking.getBookingById(bookingId)
+        user = User.getUserById(userId)
+        if user.type == 'customer' or user.type == 'staff':
+            user.cancelBooking(booking)
+
+    
+
+
+
+
             
 
         

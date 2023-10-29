@@ -112,3 +112,20 @@ class Coupon(db.Model):
     # def getCouponById(couponId: str) -> "Coupon":
     #     return Coupon.query.get(couponId)
 
+
+class Refund(db.Model):
+    __tablename__ = 'refunds'
+
+    id = db.Column(db.Integer, primary_key=True)
+    paymentId = db.Column(db.Integer, db.ForeignKey('payments.id'))
+    payment = relationship('Payment', backref=backref('refund', uselist=False))
+    amount = db.Column(db.Float, nullable=False)
+    processedOn = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    reason = db.Column(db.String, nullable=False)
+    
+    @staticmethod
+    def createRefund(paymentId: int, amount: float, reason: str) -> "Refund":
+        refund = Refund(paymentId=paymentId, amount=amount, reason=reason)
+        db.session.add(refund)
+        db.session.commit()
+        return refund

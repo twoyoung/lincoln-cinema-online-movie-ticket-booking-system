@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from app import db
-from models import Movie, Screening, Booking
+from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, Refund
 from typing import List, Union
 from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
@@ -126,34 +126,69 @@ class Admin(User):
         'polymorphic_identity': 'admin',
     }
 
+    def addMovie
 
-class FrontDeskStaff(User):
+    def addScreening
+
+    def cancelMovie
+
+    def cancelScreening
+
+class BookingMixin:
+    
+    def makeBooking(self, booking: Booking) -> bool:
+        seatIds = [seat.id for seat in booking.seats]
+        existingBooking = Booking.query.join(Booking.seats).filter(Booking.screeningId == booking.screeningId, 
+                       Booking.status != BookingStatus.CANCELLED, CinemaHallSeat.id.in_(seatIds)).first()
+        if not existingBooking:
+            db.session.add(booking)
+            db.session.commit()
+            return True
+        return False
+    
+    def cancelBooking(self, booking: Booking) -> bool:
+        existingBooking = Booking.query.get(booking.bookingId)
+        if existingBooking and existingBooking.status == BookingStatus.PENDING:
+            existingBooking.status = BookingStatus.CANCELLED
+            db.session.commit()
+        elif existingBooking and existingBooking.status == BookingStatus.CONFIRMED:
+            existingBooking.status = BookingStatus.CANCELLED
+
+            refundAmount = existingBooking.payment.discountedAmount
+
+            Refund.createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
+            db.session.commit()
+            return True
+        return False
+
+class FrontDeskStaff(User, BookingMixin):
 
     __mapper_args__ = {
         'polymorphic_identity': 'staff',
     }
 
 
-class Customer(User):
+class Customer(User, BookingMixin):
     bookings = db.relationship("Booking", backref='customer')
     notifications = db.relationship("Notification", backref='customer')
+
     __mapper_args__ = {
         'polymorphic_identity': 'customer',
     }
 
     def makeBooking(self, booking: Booking) -> bool:
-        if booking not in self.bookings:
+        success = super().makeBooking(booking)
+        if success:
             self.bookings.append(booking)
-            db.session.add(self.bookings)
             db.session.commit()
-            return True
-        return False
+            booking.sendNotification()
+        return success
     
     def cancelBooking(self, booking: Booking) -> bool:
-        if booking in self.bookings:
-            self.bookings.remove(booking)
-            return True
-        return False
+        success = super().cancelBooking(booking)
+        if success:
+            booking.sendNotification(action="canceled")
+        return success
     
     def getBookingList(self) -> List[Booking]:
         return self.bookings

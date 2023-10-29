@@ -3,6 +3,7 @@ from app import db
 from typing import List
 from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound
+from models import User
 
 
 # Define the Movie table
@@ -61,21 +62,31 @@ class Booking(db.Model):
     seats = relationship('CinemaHallSeat', backref='bookings')
 
     @staticmethod
-    def getBookingById(cls, bookingId: int) -> "Booking":
-        try:
-            return Booking.query.get(bookingId)
-        except NoResultFound:
-            return None
+    def getBookingById(bookingId: int) -> "Booking":
+        return Booking.query.get(bookingId)
+    
+    @staticmethod
+    def getBookingList(self) -> List["Booking"]:
+        return Booking.query.filter(Booking.status != BookingStatus.CANCELLED).all()
         
-    def sendNotification(self) -> "Notification":
-        seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
+    def sendNotification(self, action: str = "booked") -> "Notification":
+        if action == "booked":
+            seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
+            message = f"Your booking with ID {self.bookingId} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} is confirmed. "
+        elif action == 'canceled':
+            message = f"Your booking with ID {self.bookingId} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} has been successfully canceled. "
+        else:
+            raise ValueError("Invalid action for notification")
+        
         notification = Notification(
             userId = self.userId,
-            message = f"Your booking with ID {self.bookingId} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers}is confirmed. "
+            message = message
         )
-        user = "User".getUserById(self.userId)
+        user = User.getUserById(self.userId)
         if user.type == 'customer':
             user.notifications.append(notification)
+            db.session.add(notification)
+            db.session.commit()
 
 
 

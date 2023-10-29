@@ -89,7 +89,14 @@ def paymentOnsite(bookingId):
         return MovieController.processBooking(session['userId'], paymentData=paymentData)
     return MovieController.showPaymentPageInCinema(bookingId=bookingId)
 
-@movie_bp.route('/cancel/')
+@movie_bp.route('/bookings', method=['GET'])
+def viewBookings():
+    return MovieController.viewBookings(session['userId'])
+
+@movie_bp.route('/cancel/<bookingId>', methods=['POST'])
+def cancelBooking(bookingId):
+    return MovieController.cancelBooking(session['userId'], bookingId)
+
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
