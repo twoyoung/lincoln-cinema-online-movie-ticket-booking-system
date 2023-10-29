@@ -152,6 +152,65 @@ class MovieController:
         if user.type == 'customer' or user.type == 'staff':
             user.cancelBooking(booking)
 
+    def showAddMoviePage(self):
+        return render_template('addMovie.html')
+    
+    def addMovie(self, userId: int, newMovieData: dict):
+        user = User.getUserById(userId)
+        if user.type == 'admin':
+            newMovie = Movie(
+                title = newMovieData['title'],
+                language = newMovieData['language'],
+                genre = newMovieData['genre'],
+                releaseDate = newMovieData['releaseDate'],
+                durationMins = newMovieData['durationMins'],
+                country = newMovieData['country'],
+                description = newMovieData['description']
+            )
+            return user.addMovie(newMovie)
+        else:
+            return "Unauthorized", 404
+
+    def showAddScreeningPage(self):
+        return render_template('addScreening.html')
+    
+    def addScreening(self, userId: int, newScreeningData: dict):
+        user = User.getUserById(userId)
+        if user.type == 'admin':
+            newScreening = Screening(
+                screeningDate = newScreeningData['screeningDate'],
+                startTime = newScreeningData['startTime'],
+                endTime = newScreeningData['endTime'],
+                hallId = newScreeningData['hallId'],
+                movieId = newScreeningData['movieId']
+            )
+            return user.addScreening(newScreening)
+        else:
+            return "Unauthorized", 404
+        
+    def cancelMovie(userId: int, movieId: int):
+        user = User.getUserById(userId)
+        if user.type == 'admin':
+            movie = Movie.getMovieById(movieId)
+            return user.cancelMovie(movie)
+        else:
+            return "Unauthorized", 404
+        
+    def cancelScreening(userId: int, screeningId: int):
+        user = User.getUserById(userId)
+        if user.type == 'admin':
+            screening = Screening.getScreeningById(screeningId)
+            return user.cancelScreening(screening)
+        else:
+            return "Unauthorized", 404
+
+
+        
+    
+
+
+
+
     
 
 

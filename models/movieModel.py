@@ -5,6 +5,19 @@ from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound
 from models import User
 
+class MovieStatus(Enum):
+    ACTIVE = "active"
+    CANCELLED = "cancelled"
+
+class ScreeningStatus(Enum):
+    ACTIVE = "active"
+    CANCELLED = "cancelled"
+    FINISHED = "finished"
+
+class BookingStatus(Enum):
+    PENDING = 1
+    CONFIRMED = 2
+    CANCELLED = 3
 
 # Define the Movie table
 class Movie(db.Model):
@@ -18,6 +31,7 @@ class Movie(db.Model):
     durationMins = db.Column(db.Integer)
     country = db.Column(db.String)
     description = db.Column(db.String)
+    status = db.Column(db.Enum(MovieStatus), nullable=False)
 
     screenings = relationship("Screening", backref="movie")
 
@@ -38,10 +52,12 @@ class Movie(db.Model):
             return True
         return False
     
-class BookingStatus(Enum):
-    PENDING = 1
-    CONFIRMED = 2
-    CANCELLED = 3
+    @staticmethod
+    def getMovieById(movieId: int) -> "Movie":
+        try:
+            return Movie.query.get(movieId)
+        except NoResultFound:
+            return None
 
 # Define the Booking table
 class Booking(db.Model):
@@ -97,9 +113,11 @@ class Screening(db.Model):
     screeningDate = db.Column(db.DateTime, nullable=False)
     startTime = db.Column(db.DateTime, nullable=False)
     endTime = db.Column(db.DateTime, nullable=False)
-    hall_id = db.Column(db.Integer, db.ForeignKey('cinemaHalls.id'))
+    hallId = db.Column(db.Integer, db.ForeignKey('cinemaHalls.id'))
+    status = db.Column(db.Enum(ScreeningStatus), nullable=False)
     
-    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'))
+    
+    movieId = db.Column(db.Integer, db.ForeignKey('movies.id'))
     movie = relationship('Movie', back_populates='screenings')
     hall = relationship('CinemaHall', back_populates='screenings')
     bookings = relationship('Bookings', back_populates='screenings')

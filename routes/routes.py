@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, render_template, request, session
-from controllers import MovieController, authController
+from controllers import MovieController, AuthController
 
 movie_bp = Blueprint('movies', __name__)
 auth_bp = Blueprint('auth', __name__)
@@ -97,22 +97,57 @@ def viewBookings():
 def cancelBooking(bookingId):
     return MovieController.cancelBooking(session['userId'], bookingId)
 
+@movie_bp.route('/add/movie', methods=['GET', 'POST'])
+def addMovie():
+    if request.method == 'POST':
+        newMovieData = {
+            "title": request.POST.get('title'),
+            "language": request.POST.get('language'),
+            "genre": request.POST.get('genre'),
+            "releaseDate": request.POST.get('releaseDate'),
+            "durationMins": request.POST.get('durationMins'),
+            "country": request.POST.get('country'),
+            "description": request.POST.get('description')
+        }
+        return MovieController.addMovie(session['userId'], newMovieData)
+    return MovieController.showAddMoviePage()
+
+@movie_bp.route('/add/screening', methods=['GET', 'POST'])
+def addScreening():
+    if request.method == 'POST':
+        newScreeningData = {
+            "screeningDate": request.POST.get('screeningDate'),
+            "startTime": request.POST.get('startTime'),
+            "endTime": request.POST.get('endTime'),
+            "hallId": request.POST.get('hallId'),
+            "MovieId": request.POST.get('movieId'),
+        }
+        return MovieController.addScreening(session['userId'], newScreeningData)
+    return MovieController.showAddScreeningPage()    
+
+@movie_bp.route('/cancel/movie/<movieId>', methods=['GET', 'POST'])
+def cancelMovie(movieId):
+    return MovieController.cancelMovie(session['userId'], movieId)
+
+@movie_bp.route('/cancel/screening/<screeningId>', methods=['GET', 'POST'])
+def cancelScreening(screeningId):
+    return MovieController.cancelScreening(session['userId'], screeningId)
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        return authController.register(username, password)
-    return authController.showSignup()
+        return AuthController.register(username, password)
+    return AuthController.showSignup()
 
 @auth_bp.route('/login', method = ['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        return authController.login(username, password)
-    return authController.showLogin()
+        return AuthController.login(username, password)
+    return AuthController.showLogin()
 
 
 

@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from app import db
-from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, Refund
+from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, Refund, MovieStatus, ScreeningStatus
 from typing import List, Union
 from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
+from datetime import datetime
 
 class General:
     @classmethod
@@ -49,13 +50,6 @@ class General:
     #     except NoResultFound:
     #         return None
         # print(f"Title: {aMovie.title}, Language: {aMovie.language}, Genre: {aMovie.genre}, Release Date: {aMovie.releaseDate}, durationMins: {aMovie.durationMins}, country: {aMovie.country}, description: {aMovie.description}")
-
-    @classmethod
-    def getMovieById(cls, movieId: int) -> Movie:
-        try:
-            return Movie.query.get(movieId)
-        except NoResultFound:
-            return None
 
 
 class Person(General):
@@ -126,13 +120,83 @@ class Admin(User):
         'polymorphic_identity': 'admin',
     }
 
-    def addMovie
+    def addMovie(self, newMovie: Movie):
+        existingMovie = None
+        try:
+            existingMovie = Movie.query.filter_by(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
+        except NoResultFound:
+            pass
 
-    def addScreening
+        if not existingMovie:
+            db.session.add(newMovie)
+            db.session.commit()
+            return True
+        return False
 
-    def cancelMovie
+    def addScreening(self, newScreening: Screening):
+        existingScreening = None
+        try:
+            existingScreening = Screening.query.filter_by(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
+        except NoResultFound:
+            pass
 
-    def cancelScreening
+        if not existingScreening:
+            db.session.add(newScreening)
+            movie = Movie.getMovieById(newScreening.movieId)
+            movie.screenings.append(newScreening)
+            db.session.commit()
+            return True
+        return False
+    
+    def cancelMovie(self, movie: Movie):
+        existingMovie = Movie.getMovieById(movie.id)
+        if not existingMovie:
+            return "Movie not found"
+        elif existingMovie.status == MovieStatus.CANCELLED.value:
+            return "Movie is already cancelled"
+        else:
+            movie.status = MovieStatus.CANCELLED.value
+
+            currentDate = datetime.now().date()
+            currentTime = datetime.now().time()
+            for screening in movie.screenings:
+                if screening.screeningDate > currentDate or (screening.screeningDate == currentDate and screening.startTime > currentTime):
+                    self.cancelScreening(screening)
+
+            db.session.commit()
+            return "Movie and its future screenings cancelled successfully"
+
+
+    def cancelScreening(self, screening: Screening):
+        existingScreening = Screening.getScreeningById(screening.id)
+        currentDate = datetime.now().date()
+        currentTime = datetime.now().time()
+        if not existingScreening:
+            return "Screening not found"
+        elif existingScreening.status == ScreeningStatus.CANCELLED.value:
+            return "Screening is already cancelled"
+        elif screening.screeningDate < currentDate or (screening.screeningDate == currentDate and screening.endTime < currentTime):
+            return "Screening is already finished"
+        else:
+            screening.status = ScreeningStatus.CANCELLED.value
+
+            for booking in screening.bookings:
+                if booking.status != BookingStatus.CANCELLED:
+
+                    # label canceled for booking
+                    booking.status = BookingStatus.CANCELLED
+
+                    # create refund for all bookings
+                    refundAmount = booking.payment.discountedAmount
+                    Refund.createRefund(booking.payment.id, refundAmount, "Booking Canceled")
+
+                    # notification customers who booked online
+                    if booking.user.type == "customer":
+                        booking.sendNotification(action="canceled")
+
+            db.session.commit()
+            return "Screening and its bookings cancelled successfully."
+
 
 class BookingMixin:
     
