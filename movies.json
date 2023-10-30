@@ -1,28 +1,208 @@
 {
+  "users": [
+    {
+      "username": "admin",
+      "password": "Password",
+      "type": "admin"
+    },
+    {
+      "username": "customer",
+      "password": "Password",
+      "type": "customer"
+    },
+    {
+      "username": "staff",
+      "password": "Password",
+      "type": "staff"
+    }
+  ],
   "movies": [
     {
       "title": "Inception",
       "language": "English",
-      "genre": "Sci-Fi",
-      "release_date": "2010-07-16"
+      "genre": "Science Fiction",
+      "releaseDate": "2010-07-16",
+      "country": "USA",
+      "description": "A thief who enters the dreams of others to steal secrets tries a final job.",
+      "durationMins": 148
     },
     {
-      "title": "The Matrix",
+      "title": "Parasite",
+      "language": "Korean",
+      "genre": "Thriller",
+      "releaseDate": "2019-05-30",
+      "country": "South Korea",
+      "description": "A family of four infiltrates the lives of a wealthy family.",
+      "durationMins": 132
+    },
+    {
+      "title": "The Intouchables",
+      "language": "French",
+      "genre": "Drama",
+      "releaseDate": "2011-11-02",
+      "country": "France",
+      "description": "An unexpected friendship develops between a quadriplegic aristocrat and his caregiver.",
+      "durationMins": 112
+    },
+    {
+      "title": "Journey to Arcadia",
+      "language": "English",
+      "genre": "Adventure",
+      "releaseDate": "2023-06-05",
+      "country": "USA",
+      "description": "An epic quest to the mysterious land of Arcadia, where heroes face ancient challenges.",
+      "durationMins": 130,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Cyber Dreams",
       "language": "English",
       "genre": "Sci-Fi",
-      "release_date": "1999-03-31"
-    }
-  ],
-  "users": [
-    {
-      "username": "alice123",
-      "email": "alice@email.com",
-      "password": "securepassword1"
+      "releaseDate": "2023-07-12",
+      "country": "USA",
+      "description": "Set in a dystopian future where technology reigns supreme, a lone hacker tries to break free.",
+      "durationMins": 115,
+      "status": "ACTIVE"
     },
     {
-      "username": "bob456",
-      "email": "bob@email.com",
-      "password": "securepassword2"
+      "title": "Moonlight Sonata",
+      "language": "English",
+      "genre": "Romance",
+      "releaseDate": "2022-11-25",
+      "country": "UK",
+      "description": "Two souls intertwined by fate, dance under the moonlight, rediscovering love.",
+      "durationMins": 100,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "King's Legacy",
+      "language": "English",
+      "genre": "Historical Drama",
+      "releaseDate": "2023-02-15",
+      "country": "UK",
+      "description": "The tale of a young prince's ascent to the throne amidst political turmoil.",
+      "durationMins": 140,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Guardians of the Abyss",
+      "language": "English",
+      "genre": "Action",
+      "releaseDate": "2022-12-05",
+      "country": "USA",
+      "description": "A team of explorers venture deep into the world's deepest oceans, only to discover a world they never knew existed.",
+      "durationMins": 123,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Desert Mirage",
+      "language": "English",
+      "genre": "Mystery",
+      "releaseDate": "2023-05-15",
+      "country": "USA",
+      "description": "In the heart of the desert, a detective is drawn into a case of disappearances and mirages that blur reality and illusion.",
+      "durationMins": 110,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Winter's Embrace",
+      "language": "English",
+      "genre": "Drama",
+      "releaseDate": "2023-01-20",
+      "country": "Canada",
+      "description": "A family drama set against the backdrop of a harsh Canadian winter, testing the bonds of love and trust.",
+      "durationMins": 120,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Flight of the Phoenix",
+      "language": "English",
+      "genre": "Fantasy",
+      "releaseDate": "2023-08-12",
+      "country": "UK",
+      "description": "After the world is consumed by darkness, a young mage embarks on a journey to find the mythical Phoenix to bring back the light.",
+      "durationMins": 135,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Echoes from the Past",
+      "language": "English",
+      "genre": "Thriller",
+      "releaseDate": "2022-09-17",
+      "country": "Australia",
+      "description": "A historian's obsession with an ancient relic awakens spirits seeking revenge.",
+      "durationMins": 105,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Starship Nebula",
+      "language": "English",
+      "genre": "Sci-Fi",
+      "releaseDate": "2023-10-03",
+      "country": "USA",
+      "description": "Spacefarers find themselves in a race against time to save their ship and crew from an unknown alien entity in the vastness of space.",
+      "durationMins": 142,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "The Last Ballad",
+      "language": "English",
+      "genre": "Musical",
+      "releaseDate": "2022-07-29",
+      "country": "France",
+      "description": "A talented musician's life and love are chronicled through the songs he writes in the romantic streets of Paris.",
+      "durationMins": 115,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Silent Whispers",
+      "language": "English",
+      "genre": "Horror",
+      "releaseDate": "2023-03-13",
+      "country": "USA",
+      "description": "When a group of friends visit an old mansion, they soon realize the whispers they hear are not just their imagination.",
+      "durationMins": 98,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "The Golden Heist",
+      "language": "English",
+      "genre": "Action",
+      "releaseDate": "2023-04-21",
+      "country": "Spain",
+      "description": "A master thief assembles a team to pull off the heist of the century in Spain's most guarded vault.",
+      "durationMins": 125,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Legends of Avalon",
+      "language": "English",
+      "genre": "Fantasy",
+      "releaseDate": "2022-10-15",
+      "country": "UK",
+      "description": "Knights, dragons, and magic. Dive into the legends of King Arthur and the mystical island of Avalon.",
+      "durationMins": 140,
+      "status": "ACTIVE"
+    }
+  ],
+  "cinemaHalls": [
+    {
+      "name": "Hall 1",
+      "totalSeats": 120
+    },
+    {
+      "name": "Hall 2",
+      "totalSeats": 90
+    },
+    {
+      "name": "Hall 3",
+      "totalSeats": 110
+    },
+    {
+      "name": "Hall 4",
+      "totalSeats": 80
     }
   ]
+
+
 }

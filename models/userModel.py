@@ -222,8 +222,8 @@ class FrontDeskStaff(User, BookingMixin):
 
 
 class Customer(User, BookingMixin):
-    bookings = db.relationship("Booking", backref='customer')
-    notifications = db.relationship("Notification", backref='customer')
+    bookings = db.relationship("Booking", back_populates='user')
+    notifications = db.relationship("Notification", backref='users')
 
     __mapper_args__ = {
         'polymorphic_identity': 'customer',

@@ -1,4 +1,5 @@
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declared_attr
 from app import db
 from datetime import datetime
 from sqlalchemy.orm import backref
@@ -7,7 +8,12 @@ from models import BookingStatus
 
 
 class Payment(db.Model):
+    # __abstract__ = True
     __tablename__ = 'payments'
+
+    # @declared_attr
+    # def __tablename__(cls):
+    #     return cls.__name__.lower()
     
     id = db.Column(db.Integer, primary_key=True)
     originalAmount = db.Column(db.Float, nullable=False)
@@ -15,9 +21,17 @@ class Payment(db.Model):
     createdOn = db.Column(db.DateTime, nullable=False)
     type = db.Column(db.String(50))
     couponId = db.Column(db.String, db.ForeignKey('coupons.id'))
+
+    # @declared_attr
+    # def coupon(cls):
+        # return
     coupon = relationship('Coupon', backref='payments')
-    bookingId = db.Column(db.Integer, db.ForeignKey('bookings.id'))
-    booking = relationship('Booking', backref=backref('payment', uselist=False))
+    # bookingId = db.Column(db.Integer, db.ForeignKey('bookings.id'))
+    
+    # @declared_attr
+    # def booking(cls):
+    #     return 
+    booking = relationship('Booking', backref='payments')
 
     __mapper_args__ = {
         'polymorphic_on': type,
@@ -119,7 +133,7 @@ class Refund(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     paymentId = db.Column(db.Integer, db.ForeignKey('payments.id'))
-    payment = relationship('Payment', backref=backref('refund', uselist=False))
+    payment = relationship('Payment', backref=backref('refunds', uselist=False))
     amount = db.Column(db.Float, nullable=False)
     processedOn = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     reason = db.Column(db.String, nullable=False)

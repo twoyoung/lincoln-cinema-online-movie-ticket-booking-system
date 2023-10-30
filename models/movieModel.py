@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from app import db
 from typing import List
 from enum import Enum
@@ -30,11 +30,11 @@ class Movie(db.Model):
     durationMins = db.Column(db.Integer)
     country = db.Column(db.String)
     description = db.Column(db.String)
-    status = db.Column(db.Enum(MovieStatus), nullable=False)
+    status = db.Column(db.Enum(MovieStatus), nullable=False, default=MovieStatus.ACTIVE)
     # ratings
     # posterImage
 
-    screenings = relationship("Screening", backref="movie")
+    screenings = relationship("Screening", backref="movies")
 
     def getScreenings(self) -> List["Screening"]:
         return self.screenings
@@ -63,7 +63,7 @@ class Booking(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey("users.id"))
-    user = relationship('User', backref='bookings')
+    user = relationship('Customer', back_populates='bookings')
     numberOfSeats = db.Column(db.Integer, nullable=False)
     createdOn = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Enum(BookingStatus), nullable=False)
@@ -71,7 +71,7 @@ class Booking(db.Model):
     screening = relationship('Screening', back_populates='bookings')
     orderTotal = db.Column(db.Float, nullable=False)
     paymentId = db.Column(db.Integer, db.ForeignKey('payments.id'))
-    payment = relationship('Payment', backref='bookings')
+    payment = relationship('Payment', back_populates='booking', uselist=False)
 
     seats = relationship('CinemaHallSeat', backref='bookings')
 
@@ -112,23 +112,24 @@ class Screening(db.Model):
     startTime = db.Column(db.DateTime, nullable=False)
     endTime = db.Column(db.DateTime, nullable=False)
     hallId = db.Column(db.Integer, db.ForeignKey('cinemaHalls.id'))
-    status = db.Column(db.Enum(ScreeningStatus), nullable=False)
+    status = db.Column(db.Enum(ScreeningStatus), nullable=False, default=ScreeningStatus.ACTIVE)
     
     
     movieId = db.Column(db.Integer, db.ForeignKey('movies.id'))
     movie = relationship('Movie', back_populates='screenings')
     hall = relationship('CinemaHall', back_populates='screenings')
-    bookings = relationship('Booking', back_populates='screenings')
+    bookings = relationship('Booking', back_populates='screening')
 
     def getSeatChart(self):
-        allSeats = self.hall.seats
-        reservedSeats = []
-        for booking in self.bookings:
-            for seat in booking.seats:
-                reservedSeats.append(seat)
+        allSeats = set(self.hall.seats)
+        reservedSeats = {seat for booking in self.bookings for seat in booking.seats}
+        # for booking in self.bookings:
+        #     for seat in booking.seats:
+        #         reservedSeats.append(seat)
+        availableSeats = allSeats - reservedSeats
         seatChart = {
-            'available': [seat for seat in allSeats if seat not in reservedSeats],
-            'reserved': reservedSeats
+            'available': list(availableSeats),
+            'reserved': list(reservedSeats)
         }
         return seatChart
     
@@ -166,7 +167,7 @@ class CinemaHallSeat(db.Model):
     seatType = db.Column(db.String, nullable=False)
     seatPrice = db.Column(db.Float, nullable=False)
     hallId = db.Column(db.Integer, db.ForeignKey('cinemaHalls.id'))
-    
+    bookingId = db.Column(db.Integer, db.ForeignKey('bookings.id'))
     hall = relationship('CinemaHall', back_populates='seats')
 
     @property
