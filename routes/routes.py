@@ -6,7 +6,7 @@ def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if 'userId' not in session:
-            return redirect(url_for('auth_bp.login', next=request.url))
+            return redirect(url_for('auth.login', next=request.url))
         return f(*args, **kwargs)
     return wrapper
 
@@ -16,7 +16,7 @@ def admin_required(f):
     def wrapper(*args, **kwargs):
         if session.get('userType') != 'admin':
             flash("You do not have the required permissions to access this page.")
-            return redirect(url_for('movie_bp.showMovies'))
+            return redirect(url_for('movies.home'))
         return f(*args, **kwargs)
     return wrapper
 
@@ -57,8 +57,8 @@ def showMovieScreenings(movieId):
 @login_required
 def selectSeats(screeningId):
     if request.method == 'POST':
-        selectedSeats = request.form.getlist('selectedSeats')
-        return MovieController.processBooking(session['userId'], screeningId=screeningId, selectedSeats=selectedSeats)   
+        selectedSeatIds = request.form.getlist('selectedSeatIds')
+        return MovieController.processBooking(session['userId'], screeningId=screeningId, selectedSeatIds=selectedSeatIds)   
     return MovieController.viewSeatChart(screeningId)
 
 @movie_bp.route('/book/<bookingId>/payment/online', methods=['GET', 'POST'])
@@ -114,7 +114,7 @@ def paymentOnsite(bookingId):
             paymentData['couponDiscount'] = request.form.get('couponDiscount')
 
         return MovieController.processBooking(session['userId'], paymentData=paymentData)
-    return MovieController.showPaymentPageInCinema(bookingId=bookingId)
+    return MovieController.showPaymentPageOnsite(bookingId=bookingId)
 
 @movie_bp.route('/bookings', methods=['GET'])
 @login_required
@@ -181,6 +181,11 @@ def login():
         password = request.form.get('password')
         return AuthController.login(username, password)
     return AuthController.showLogin()
+
+@auth_bp.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    return AuthController.logout()
 
 
 

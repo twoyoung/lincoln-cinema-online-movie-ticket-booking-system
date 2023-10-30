@@ -4,20 +4,67 @@
 
 {% block content %}
 
-<div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-4">Seat Chart</h1>
-    {% if seatChart %}
-        <!-- Display the seat chart. Adjust this part based on how your seatChart object looks -->
-        <div class="grid grid-cols-10 gap-4">
-            {% for seat in seatChart %}
-                <div class="{{ 'bg-green-500' if seat.is_available else 'bg-red-500' }} p-4 rounded">
-                    {{ seat.number }}
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-gray-500">No seat chart available for this screening.</p>
-    {% endif %}
-</div>
+<form method="post" action="{{ url_for('movies.selectSeats', screeningId=screeningId) }}">
+
+
+    <div class="seat-chart mt-10">
+        {% for seatRow in seatMatrix %}
+            <div class="flex justify-center mb-2">
+                {% for seat in seatRow %}
+                    {% if seat %}
+                        {% if seat.status == 'available' %}
+                            <div data-seat="available" data-seat-id="{{ seat.seatObject.id }}" class="seat w-10 h-10 mx-1 border border-black rounded-md cursor-pointer bg-green-500" title="Seat: {{ seat.seatObject.id }}; Price: ${{ seat.seatObject.price }}; Type: {{ seat.seatObject.type }}"></div>
+                        {% else %}
+                            <div class="seat w-10 h-10 mx-1 border border-black rounded-md bg-gray-400" title="Unavailable"></div>
+                        {% endif %}
+                    {% else %}
+                        <div class="seat w-10 h-10 mx-1 border border-black rounded-md bg-gray-400"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <input type="hidden" name="selectedSeatIds" id="selectedSeatIdsInput">
+        <button id="bookSeats" class="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Book Seats
+        </button>
+
+ </form>
+
+
+<script>
+    let selectedSeatIds = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const availableSeats = document.querySelectorAll('[data-seat="available"]');
+
+        availableSeats.forEach(seat => {
+            seat.addEventListener('click', function() {
+                const seatId = parseInt(this.getAttribute('data-seat-id'));
+                if (this.classList.contains('bg-green-500')) {
+                    this.classList.remove('bg-green-500');
+                    this.classList.add('bg-blue-500');
+                    selectedSeatIds.push(seatId);
+                } else {
+                    this.classList.remove('bg-blue-500');
+                    this.classList.add('bg-green-500');
+                    const index = selectedSeatIds.indexOf(seatId);
+                    if (index > -1) {
+                        selectedSeatIds.splice(index, 1);
+                    }
+                }
+            });
+        });
+
+        document.getElementById('bookSeats').addEventListener('click', function(e) {
+            const selectedSeatIdsInput = document.getElementById('selectedSeatIdsInput');
+            selectedSeatIdsInput.value = selectedSeatIds.join(',');
+        });
+    });
+
+</script>
 
 {% endblock %}
+
+

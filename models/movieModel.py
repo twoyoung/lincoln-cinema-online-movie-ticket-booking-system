@@ -121,17 +121,34 @@ class Screening(db.Model):
     bookings = relationship('Booking', back_populates='screening')
 
     def getSeatChart(self):
-        allSeats = set(self.hall.seats)
+        # allSeats = set(self.hall.seats)
+        # reservedSeats = {seat for booking in self.bookings for seat in booking.seats}
+        # availableSeats = allSeats - reservedSeats
+        # seatChart = {
+        #     'available': list(availableSeats),
+        #     'reserved': list(reservedSeats)
+        # }
+        # return seatChart
+
+        allSeats = {seat.seatNumber: seat for seat in self.hall.seats}
         reservedSeats = {seat for booking in self.bookings for seat in booking.seats}
-        # for booking in self.bookings:
-        #     for seat in booking.seats:
-        #         reservedSeats.append(seat)
-        availableSeats = allSeats - reservedSeats
-        seatChart = {
-            'available': list(availableSeats),
-            'reserved': list(reservedSeats)
-        }
-        return seatChart
+        print(reservedSeats)
+        rows = sorted(set(seat.seatRow for seat in allSeats.values()))
+        maxColumns = max([seat.seatColumn for seat in allSeats.values()])
+
+        seatMatrix = []
+        for row in rows:
+            seatRow = []
+            for col in range(1, maxColumns + 1):
+                seatNumber = f"{row}{col}"
+                seat = allSeats.get(seatNumber)
+                if seat:
+                    status = 'reserved' if seatNumber in reservedSeats else 'available'
+                    seatRow.append({'seatNumber': seatNumber, 'status': status, 'seatObject': seat})
+                else:
+                    seatRow.append(None)
+            seatMatrix.append(seatRow)
+        return seatMatrix
     
     @staticmethod
     def getScreeningById(screeningId: int) -> "Screening":
@@ -173,6 +190,9 @@ class CinemaHallSeat(db.Model):
     @property
     def seatNumber(self):
         return f"{self.seatRow}{self.seatColumn}"
-
+    
+    @staticmethod
+    def getSeatById(seatId: int) -> "CinemaHallSeat":
+        return CinemaHallSeat.query.get(seatId)
 
 

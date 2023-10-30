@@ -43,31 +43,36 @@ class MovieController:
     def viewSeatChart(screeningId: int):
         screening = Screening.getScreeningById(screeningId)
         if screening:
-            seatChart = screening.getSeatChart()
-            return render_template("seatChart.html", seatChart=seatChart)
+            seatMatrix = screening.getSeatChart()
+            return render_template("seatChart.html", seatMatrix=seatMatrix, screeningId=screeningId)
         else:
             return "Screening not found", 404
         
     @staticmethod
-    def showPaymentpageOnline(bookingId: int):
+    def showPaymentPageOnline(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("paymentOnline.html", booking=booking)
     
     @staticmethod
-    def showPaymentpageOnsite(bookingId: int):
+    def showPaymentPageOnsite(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("paymentOnsite.html", booking=booking)
 
     @staticmethod
-    def processBooking(userId: int, screeningId: int = None, selectedSeats: List[CinemaHallSeat] = None, paymentData = None):
+    def processBooking(userId: int, screeningId: int = None, selectedSeatIds: List[str] = None, paymentData = None):
         user = User.getUserById(userId)
-        if selectedSeats:
+        if selectedSeatIds:
+            selectedSeats = []
+            seatIdString = selectedSeatIds[0].split(',')
+            seatIds = [int(seatId) for seatId in seatIdString]
+            for seatId in seatIds:
+                selectedSeats.append(CinemaHallSeat.getSeatById(seatId))
             booking = Booking()
             booking.userId = userId
             booking.user = user
             booking.screeningId = screeningId
             booking.status = BookingStatus.PENDING
-            screening = General.getScreeningById(screeningId)
+            screening = Screening.getScreeningById(screeningId)
             booking.screening = screening
             booking.numberOfSeats = len(selectedSeats)
             booking.createdOn = datetime.now()
@@ -76,10 +81,12 @@ class MovieController:
 
             if user.type == 'customer':
                 user.makeBooking(booking)
-                return redirect(url_for('movie_bp.paymentOnline', bookingId = booking.bookingId))
+                print(booking.id)
+                return redirect(url_for('movies.paymentOnline', bookingId = booking.id))
             elif user.type == 'staff':
                 user.makeBooking(booking)
-                return redirect(url_for('movie_bp.paymentOnsite', bookingId = booking.bookingId))
+                print(booking.id)
+                return redirect(url_for('movies.paymentOnsite', bookingId = booking.id))
             
         elif paymentData:
             booking = Booking.getBookingById(paymentData['bookingId'])

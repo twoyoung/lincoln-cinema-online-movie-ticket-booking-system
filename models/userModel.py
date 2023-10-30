@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from app import db
 from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, MovieStatus, ScreeningStatus
-from typing import List, Union
+from typing import List, Union, Tuple
 from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
 from datetime import datetime
@@ -91,23 +91,25 @@ class User(Person, db.Model):
         self._password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     @staticmethod
-    def login(username: str, password: str) -> Union[str, bool]:
+    def login(username: str, password: str) -> Tuple[bool, str]:
         user = User.query.filter_by(username=username).first()
         if not user:
-            return "Username not found"
+            return False, "Username not found."
         
         if bcrypt.checkpw(password.encode('utf-8'), user._password.encode('utf-8')):
             session['userId'] = user.id
             session['userType'] = user.type
-            return True
+            return True, "Logged in successfully."
         else:
-            return "Incorrect password."
+            return False, "Incorrect password."
 
     @staticmethod
-    def logout() -> bool:
+    def logout() -> Tuple[bool, str]:
+        if 'userId' not in session:
+            return False, "Already logged out or session not started."
         session.pop('userId', None)
         session.pop('userType', None)
-        return True
+        return True, "Logged out successfully."
     
     def resetPassword(self, newPassword: str) -> bool:
         self.password = newPassword
@@ -240,7 +242,6 @@ class Customer(User, BookingMixin):
         if success:
             self.bookings.append(booking)
             db.session.commit()
-            booking.sendNotification()
         return success
     
     def cancelBooking(self, booking: Booking) -> bool:
