@@ -6,7 +6,7 @@ from datetime import datetime
 print("Starting script...")
 # Populate the database from JSON file
 def populateDatabaseFromJson(filename):
-    if filename == 'movies.json':
+    if filename == 'screenings.json':
         with open(filename, 'r') as file:
             data = json.load(file)
             print('Loading file...')
@@ -39,22 +39,27 @@ def populateDatabaseFromJson(filename):
                 db.session.add(hall)
                 print("Adding a hall to database...")
 
-            
-
             # Populate screenings
             for screeningData in data.get('screenings', []):
-                movie = Movie.query.filter_by(title=screeningData['title']).first()
-                hall = CinemaHall.query.filter_by(name=screeningData['hallName']).first()
+                movie = Movie.query.filter_by(id=screeningData['movieId']).first()
+                hall = CinemaHall.query.filter_by(id=screeningData['hallId']).first()
                 if movie and hall:
-                    screening = Screening(movieId=movie.id, hallId=hall.id, **screeningData)
+                    screening = Screening(
+                        movieId=movie.id, 
+                        hallId=hall.id, 
+                        screeningDate = datetime.strptime(screeningData['screeningDate'], '%Y-%m-%d'),
+                        startTime = datetime.strptime(screeningData['startTime'], '%Y-%m-%d %H:%M:%S'),
+                        endTime=datetime.strptime(screeningData['endTime'], '%Y-%m-%d %H:%M:%S'),
+                        status = screeningData['status']
+                    )
                     db.session.add(screening)
                 print("Adding a screening to database...")
 
             # Populate cinema hall seats
             for seatData in data.get('cinemaHallSeats', []):
-                hall = CinemaHall.query.filter_by(name=seatData['hallName']).first()
+                hall = CinemaHall.query.filter_by(id=seatData['hallId']).first()
                 if hall:
-                    seat = CinemaHallSeat(**seatData, hallId=hall.id)
+                    seat = CinemaHallSeat(**seatData)
                     db.session.add(seat)
                 print("Adding a seat to database...")
 
@@ -68,4 +73,4 @@ def populateDatabaseFromJson(filename):
 if __name__ == '__main__':
     print('Starting...')
     with app.app_context():
-        populateDatabaseFromJson('movies.json')
+        populateDatabaseFromJson('screenings.json')

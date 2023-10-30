@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, url_for, redirect, flash
+from flask import Blueprint, request, session, url_for, redirect, flash, render_template
 from controllers import MovieController, AuthController
 from functools import wraps
 
@@ -6,7 +6,7 @@ def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if 'userId' not in session:
-            return redirect(url_for('auth_bp.login'))
+            return redirect(url_for('auth_bp.login', next=request.url))
         return f(*args, **kwargs)
     return wrapper
 
@@ -24,6 +24,10 @@ def admin_required(f):
 movie_bp = Blueprint('movies', __name__)
 auth_bp = Blueprint('auth', __name__)
 
+@movie_bp.route('/', methods=['GET'])
+def home():
+    return MovieController.browseMovies()
+
 @movie_bp.route('/movies', methods = ['GET', 'POST'])
 def showMovies():
     title = request.args.get('title')
@@ -33,7 +37,7 @@ def showMovies():
     if title:
         return MovieController.searchMovies("title", title)
     elif year:
-        return MovieController.searchMovies("year", year)
+        return MovieController.searchMovies("year", int(year))
     elif language:
         return MovieController.searchMovies("language", language)
     elif genre:

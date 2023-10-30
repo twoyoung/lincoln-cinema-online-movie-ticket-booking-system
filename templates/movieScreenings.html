@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}screenings{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto max-w-4xl">
+
+    <!-- Movie Title from the first screening as reference -->
+    <h1 class="text-3xl font-bold mb-6">Screenings for {{ screeningList[0].movie.title if screeningList else 'this Movie' }}</h1>
+
+    <!-- Screenings List -->
+    <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+        {% if screeningList %}
+            {% for screening in screeningList %}
+                <div class="border-b border-gray-200 py-4">
+                    <p><span class="font-medium">Date:</span> {{ screening.screeningDate.strftime('%d %B, %Y') }}</p>
+                    <p><span class="font-medium">Start Time:</span> {{ screening.startTime.strftime('%H:%M') }}</p>
+                    <p><span class="font-medium">End Time:</span> {{ screening.endTime.strftime('%H:%M') }}</p>
+                    <p><span class="font-medium">Hall:</span> {{ screening.hall.name }}</p>
+
+                    <!-- Book Button -->
+                    <a href="{{ url_for('movies.selectSeats', screeningId=screening.id) }}" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-150">Book</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-500">No screenings available for this movie.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

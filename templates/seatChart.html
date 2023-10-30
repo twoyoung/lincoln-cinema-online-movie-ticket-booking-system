@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}screenings{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Seat Chart</h1>
+    {% if seatChart %}
+        <!-- Display the seat chart. Adjust this part based on how your seatChart object looks -->
+        <div class="grid grid-cols-10 gap-4">
+            {% for seat in seatChart %}
+                <div class="{{ 'bg-green-500' if seat.is_available else 'bg-red-500' }} p-4 rounded">
+                    {{ seat.number }}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-500">No seat chart available for this screening.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -7,6 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
 from datetime import datetime
 from flask import session
+from sqlalchemy import extract
 
 class General:
     @classmethod
@@ -40,7 +41,7 @@ class General:
     @classmethod
     def searchMovieYear(cls, rYear: int) -> List[Movie]:
         try:
-            return Movie.query.filter(Movie.releaseDate.year == rYear).all()
+            return Movie.query.filter(extract('year', Movie.releaseDate) == rYear).all()
         except NoResultFound:
             return []
 
@@ -89,16 +90,21 @@ class User(Person, db.Model):
     def password(self, password):
         self._password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-
-    def login(self, username: str, password: str) -> bool:
+    @staticmethod
+    def login(username: str, password: str) -> Union[str, bool]:
         user = User.query.filter_by(username=username).first()
-        if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        if not user:
+            return "Username not found"
+        
+        if bcrypt.checkpw(password.encode('utf-8'), user._password.encode('utf-8')):
             session['userId'] = user.id
             session['userType'] = user.type
             return True
-        return False
+        else:
+            return "Incorrect password."
 
-    def logout(self) -> bool:
+    @staticmethod
+    def logout() -> bool:
         session.pop('userId', None)
         session.pop('userType', None)
         return True

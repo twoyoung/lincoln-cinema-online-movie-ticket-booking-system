@@ -1,8 +1,7 @@
 import json
 
 # A utility function to generate the seat data
-
-def generate_seats_for_hall(hall_name, total_seats):
+def generate_seats_for_hall(hall_id, total_seats):
     seats_per_row = 15
     rows = total_seats // seats_per_row
     remaining_seats = total_seats % seats_per_row
@@ -13,7 +12,7 @@ def generate_seats_for_hall(hall_name, total_seats):
     for row in range(1, rows + 1):
         for seat_num in range(1, seats_per_row + 1):
             seat = {
-                "hallName": hall_name,
+                "hallId": hall_id,
                 "seatRow": chr(64 + row),  # Converts 1 to A, 2 to B, etc.
                 "seatColumn": seat_num,
                 "seatType": "Regular",
@@ -25,7 +24,7 @@ def generate_seats_for_hall(hall_name, total_seats):
     if remaining_seats:
         for seat_num in range(1, remaining_seats + 1):
             seat = {
-                "hallName": hall_name,
+                "hallId": hall_id,
                 "seatRow": chr(64 + rows + 1),  # Next row
                 "seatColumn": seat_num,
                 "seatType": "Regular",
@@ -39,18 +38,22 @@ def generate_seats_for_hall(hall_name, total_seats):
 data = {
   "cinemaHalls": [
     {
+      "id": 1,
       "name": "Hall 1",
       "totalSeats": 120
     },
     {
+      "id": 2,
       "name": "Hall 2",
       "totalSeats": 90
     },
     {
+      "id": 3,
       "name": "Hall 3",
       "totalSeats": 110
     },
     {
+      "id": 4,
       "name": "Hall 4",
       "totalSeats": 80
     }
@@ -59,7 +62,7 @@ data = {
 }
 
 for hall in data['cinemaHalls']:
-    data['cinemaHallSeats'].extend(generate_seats_for_hall(hall['name'], hall['totalSeats']))
+    data['cinemaHallSeats'].extend(generate_seats_for_hall(hall['id'], hall['totalSeats']))
 
 # Save data to JSON
 with open('lincoln_cinemas_data.json', 'w') as outfile:

@@ -1,0 +1,1 @@
+from .routes import movie_bp, auth_bp

@@ -4,11 +4,13 @@ from typing import List
 from datetime import datetime
 
 class MovieController:
-    def browseMovies(self):
+    @staticmethod
+    def browseMovies():
         allMovies = General.getAllMovies()
         return render_template("index.html", allMovies=allMovies)
     
-    def searchMovies(self, criteria: str, value: str):
+    @staticmethod
+    def searchMovies(criteria: str, value: str):
         if criteria == "title":
             filteredMovies = General.searchMovieTitle(value)
         elif criteria == "language":
@@ -17,25 +19,28 @@ class MovieController:
             filteredMovies = General.searchMovieGenre(value)
         elif criteria == "year":
             filteredMovies = General.searchMovieYear(value)
-        return render_template("index.html", filteredMovies=filteredMovies)
+            print(filteredMovies)
+        return render_template("index.html", allMovies=filteredMovies)
 
-    def viewMovieDetails(self, movieId: int):
-        movie = General.getMovieById(movieId)
+    @staticmethod
+    def viewMovieDetails(movieId: int):
+        movie = Movie.getMovieById(movieId)
         if movie:
             return render_template("movie_details.html", movie=movie)
         else:
             return "Movie not found", 404
     
-    def viewMovieScreenings(self, movieId: int):
-        movie = General.getMovieById(movieId)
+    @staticmethod
+    def viewMovieScreenings(movieId: int):
+        movie = Movie.getMovieById(movieId)
         if movie:
             screeningList = movie.screenings
         else:
             screeningList = []
         return render_template("movieScreenings.html", screeningList=screeningList)
         
-
-    def viewSeatChart(self, screeningId: int):
+    @staticmethod
+    def viewSeatChart(screeningId: int):
         screening = Screening.getScreeningById(screeningId)
         if screening:
             seatChart = screening.getSeatChart()
@@ -43,15 +48,18 @@ class MovieController:
         else:
             return "Screening not found", 404
         
-    def showPaymentpageOnline(self, bookingId: int):
+    @staticmethod
+    def showPaymentpageOnline(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("paymentOnline.html", booking=booking)
     
-    def showPaymentpageOnsite(self, bookingId: int):
+    @staticmethod
+    def showPaymentpageOnsite(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("paymentOnsite.html", booking=booking)
 
-    def processBooking(self, userId: int, screeningId: int = None, selectedSeats: List[CinemaHallSeat] = None, paymentData = None):
+    @staticmethod
+    def processBooking(userId: int, screeningId: int = None, selectedSeats: List[CinemaHallSeat] = None, paymentData = None):
         user = User.getUserById(userId)
         if selectedSeats:
             booking = Booking()
@@ -137,24 +145,27 @@ class MovieController:
         else:
             return "Invalid booking data", 400
         
-    def viewBookings(self, userId: int):
+    @staticmethod
+    def viewBookings(userId: int):
         user = User.getUserById(userId)
         if user.type == "customer":
             return user.getBookingList()
         if user.type == "staff":
             return Booking.getBookingList()
             
-        
-    def cancelBooking(self, userId: int, bookingId: int):
+    @staticmethod
+    def cancelBooking(userId: int, bookingId: int):
         booking = Booking.getBookingById(bookingId)
         user = User.getUserById(userId)
         if user.type == 'customer' or user.type == 'staff':
             return user.cancelBooking(booking)
 
-    def showAddMoviePage(self):
+    @staticmethod
+    def showAddMoviePage():
         return render_template('addMovie.html')
     
-    def addMovie(self, userId: int, newMovieData: dict):
+    @staticmethod
+    def addMovie(userId: int, newMovieData: dict):
         user = User.getUserById(userId)
         if user.type == 'admin':
             newMovie = Movie(
@@ -170,10 +181,12 @@ class MovieController:
         else:
             return "Unauthorized", 401
 
-    def showAddScreeningPage(self):
+    @staticmethod
+    def showAddScreeningPage():
         return render_template('addScreening.html')
     
-    def addScreening(self, userId: int, newScreeningData: dict):
+    @staticmethod
+    def addScreening(userId: int, newScreeningData: dict):
         user = User.getUserById(userId)
         if user.type == 'admin':
             newScreening = Screening(
@@ -187,7 +200,8 @@ class MovieController:
         else:
             return "Unauthorized", 401
         
-    def cancelMovie(slef, userId: int, movieId: int):
+    @staticmethod
+    def cancelMovie(userId: int, movieId: int):
         user = User.getUserById(userId)
         if user.type == 'admin':
             movie = Movie.getMovieById(movieId)
@@ -195,7 +209,8 @@ class MovieController:
         else:
             return "Unauthorized", 401
         
-    def cancelScreening(self, userId: int, screeningId: int):
+    @staticmethod
+    def cancelScreening(userId: int, screeningId: int):
         user = User.getUserById(userId)
         if user.type == 'admin':
             screening = Screening.getScreeningById(screeningId)

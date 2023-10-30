@@ -1,11 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Lincoln Cinema{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto p-6">
+
+    <!-- Filter Section -->
+    <div class="bg-white p-4 rounded shadow-md mb-6">
+        <h2 class="text-xl font-bold mb-4">Filter Movies</h2>
+        <form action="/movies" method="get" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Title Filter -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
+                    <input type="text" name="title" id="title" placeholder="Title" class="mt-1 p-2 w-full border rounded">
+                </div>
+
+                <!-- Language Filter -->
+                <div>
+                    <label for="language" class="block text-sm font-medium text-gray-700">Language:</label>
+                    <input type="text" name="language" id="language" placeholder="Language" class="mt-1 p-2 w-full border rounded">
+                </div>
+
+                <!-- Genre Filter -->
+                <div>
+                    <label for="genre" class="block text-sm font-medium text-gray-700">Genre:</label>
+                    <input type="text" name="genre" id="genre" placeholder="Genre" class="mt-1 p-2 w-full border rounded">
+                </div>
+
+                <!-- Release Date Filter -->
+                <div>
+                    <label for="year" class="block text-sm font-medium text-gray-700">Year:</label>
+                    <input type="text" name="year" id="year" class="mt-1 p-2 w-full border rounded">
+                </div>
+            </div>
+            
+            <!-- Search Button -->
+            <div class="text-right">
+                <button type="submit" class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Apply Filters</button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- movie section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for movie in allMovies %}
+        <a href="{{ url_for('movies.showMovieDetails', movieId=movie.id) }}" class="block bg-white p-5 rounded shadow-md no-underline hover:no-underline">
+            <img src="/static/moviePosters/sample.jpg" alt="{{ movie.title }}" class="w-full h-56 object-cover rounded-md">
+            <h2 class="text-xl font-bold mt-4">{{ movie.title }}</h2>
+            <p class="text-gray-600">{{ movie.description }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
