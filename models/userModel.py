@@ -164,7 +164,8 @@ class Admin(User):
         raise AttributeError("Admin does not have access to a bookings list.")
 
     def addMovie(self, newMovie: Movie) -> bool:
-        existingMovie = Movie.query.filter_by(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
+        existingMovie = Movie.query.filter(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
+        print(existingMovie)
 
         if not existingMovie:
             db.session.add(newMovie)
@@ -173,7 +174,7 @@ class Admin(User):
         return False
 
     def addScreening(self, newScreening: Screening) -> bool:
-        existingScreening = Screening.query.filter_by(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
+        existingScreening = Screening.query.filter(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
 
         if not existingScreening:
             db.session.add(newScreening)

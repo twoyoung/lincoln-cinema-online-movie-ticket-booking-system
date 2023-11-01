@@ -1,4 +1,4 @@
-from flask import jsonify, redirect, render_template, url_for
+from flask import jsonify, redirect, render_template, url_for, flash, get_flashed_messages, session
 from sqlalchemy import Float
 from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification
 from typing import List
@@ -27,7 +27,7 @@ class MovieController:
     def viewMovieDetails(movieId: int):
         movie = Movie.getMovieById(movieId)
         if movie:
-            return render_template("movie_details.html", movie=movie)
+            return render_template("movie_details.html", movie=movie, userType=session['userType'])
         else:
             return "Movie not found", 404
     
@@ -224,31 +224,44 @@ class MovieController:
                 title = newMovieData['title'],
                 language = newMovieData['language'],
                 genre = newMovieData['genre'],
-                releaseDate = newMovieData['releaseDate'],
+                releaseDate = datetime.strptime(newMovieData['releaseDate'], '%Y-%m-%d'),
                 durationMins = newMovieData['durationMins'],
                 country = newMovieData['country'],
                 description = newMovieData['description']
             )
-            return user.addMovie(newMovie)
+            success = user.addMovie(newMovie)
+            if success:
+                flash("The movie was added successfully")
+                return redirect(url_for('movies.showMovieDetails', movieId = newMovie.id))
+            else:
+                flash("The movie was not added successfully")
+                return redirect(url_for('movies.addMovie'))
         else:
-            return "Unauthorized", 401
+            return "Unauthorized"
 
     @staticmethod
-    def showAddScreeningPage():
-        return render_template('addScreening.html')
+    def showAddScreeningPage(movieId):
+        return render_template('addScreening.html', movieId=movieId)
     
     @staticmethod
     def addScreening(userId: int, newScreeningData: dict):
         user = User.getUserById(userId)
         if user.type == 'admin':
             newScreening = Screening(
-                screeningDate = newScreeningData['screeningDate'],
-                startTime = newScreeningData['startTime'],
-                endTime = newScreeningData['endTime'],
+                screeningDate = datetime.strptime(newScreeningData['screeningDate'], '%Y-%m-%d'),
+                startTime = datetime.strptime(newScreeningData['startTime'],'%H:%M'),
+                endTime = datetime.strptime(newScreeningData['endTime'],'%H:%M'),
                 hallId = newScreeningData['hallId'],
                 movieId = newScreeningData['movieId']
             )
-            return user.addScreening(newScreening)
+            print(newScreeningData)
+            success =  user.addScreening(newScreening)
+            if success:
+                flash("New Screening added successfully")
+                return redirect(url_for('movies.showMovieScreenings', movieId = newScreeningData['movieId']))
+            else:
+                flash("The Screening was not added successfully")
+                return redirect(url_for('movies.addScreening', movieId = newScreeningData['movieId']))
         else:
             return "Unauthorized", 401
         

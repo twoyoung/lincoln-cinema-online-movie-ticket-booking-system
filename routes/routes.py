@@ -159,19 +159,19 @@ def addMovie():
         return MovieController.addMovie(session['userId'], newMovieData)
     return MovieController.showAddMoviePage()
 
-@movie_bp.route('/add/screening', methods=['GET', 'POST'])
+@movie_bp.route('/add/movie/<movieId>/screening', methods=['GET', 'POST'])
 @admin_required
-def addScreening():
+def addScreening(movieId):
     if request.method == 'POST':
         newScreeningData = {
             "screeningDate": request.form.get('screeningDate'),
             "startTime": request.form.get('startTime'),
             "endTime": request.form.get('endTime'),
             "hallId": request.form.get('hallId'),
-            "movieId": request.form.get('movieId'),
+            "movieId": movieId
         }
         return MovieController.addScreening(session['userId'], newScreeningData)
-    return MovieController.showAddScreeningPage()    
+    return MovieController.showAddScreeningPage(movieId)    
 
 @movie_bp.route('/cancel/movie/<movieId>', methods=['DELETE'])
 @admin_required
