@@ -144,8 +144,9 @@ class BookingMixin:
             existingBooking.status = BookingStatus.CANCELLED
 
             refundAmount = existingBooking.payment.discountedAmount
-
-            "Refund".createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
+            
+            from models import Refund
+            Refund.createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
             db.session.commit()
             return True
         else:

@@ -51,9 +51,13 @@ class Payment(db.Model):
     def createPayment(payment: "Payment") -> "Payment":
         payment.discountedAmount = payment.calcFinalPayment()
         db.session.add(payment)
-        db.session.commit()
+
         payment.booking.status = BookingStatus.CONFIRMED
+
         payment.booking.payment = payment
+
+        db.session.commit()
+        
         payment.booking.sendNotification()
         return payment
     

@@ -134,7 +134,7 @@ def confirmBooking(bookingId):
     return MovieController.confirmBooking(bookingId=bookingId)
 
 @movie_bp.route('/bookings', methods=['GET'])
-@customer_required
+@login_required
 def viewBookings():
     return MovieController.viewBookings(session['userId'])
 

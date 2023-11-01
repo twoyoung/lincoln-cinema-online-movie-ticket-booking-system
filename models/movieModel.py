@@ -80,12 +80,12 @@ class Booking(db.Model):
         return Booking.query.get(bookingId)
     
     @staticmethod
-    def getBookingList(self) -> List["Booking"]:
+    def getBookingList() -> List["Booking"]:
         return Booking.query.filter(Booking.status != BookingStatus.CANCELLED).all()
         
     def sendNotification(self, action: str = "booked") -> "Notification":
         from models import User
-        user = db.session.query(User).get(self.userId)
+        user = User.getUserById(self.userId)
         if user.type == 'customer':
 
             seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])

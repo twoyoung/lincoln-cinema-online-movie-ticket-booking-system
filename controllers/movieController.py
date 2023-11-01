@@ -192,22 +192,25 @@ class MovieController:
             return jsonify(success=True)
         return jsonify(success=False)
 
-
-        
     @staticmethod
     def viewBookings(userId: int):
         user = User.getUserById(userId)
         if user.type == "customer":
-            return user.getBookingList()
+            bookingList = user.getBookingList()
         if user.type == "staff":
-            return Booking.getBookingList()
+            bookingList = Booking.getBookingList()
+        return render_template('bookings.html', bookingList=bookingList)
             
     @staticmethod
     def cancelBooking(userId: int, bookingId: int):
         booking = Booking.getBookingById(bookingId)
         user = User.getUserById(userId)
         if user.type == 'customer' or user.type == 'staff':
-            return user.cancelBooking(booking)
+            success = user.cancelBooking(booking)
+            if success:
+                return "cancelled successfully"
+            else:
+                return "cancel failed"
 
     @staticmethod
     def showAddMoviePage():

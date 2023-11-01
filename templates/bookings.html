@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}My bookings{% endblock %}
+
+{% block content %}
+
+<h2 class="text-xl font-bold mb-4">Your Bookings</h2>
+
+<table class="min-w-full bg-white">
+    <thead>
+        <tr>
+            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
+                Booking ID
+            </th>
+            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
+                Movie
+            </th>
+            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
+                Date & Time
+            </th>
+            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
+                Seats
+            </th>
+            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
+                Total Amount
+            </th>
+            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
+                Status
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookingList %}
+        <tr>
+            <td class="py-2 px-4 border-b border-gray-200">{{ booking.id }}</td>
+            <td class="py-2 px-4 border-b border-gray-200">{{ booking.screening.movie.title }}</td>
+            <td class="py-2 px-4 border-b border-gray-200">{{ booking.screening.screeningDate }} {{ booking.screening.startTime }}</td>
+            <td class="py-2 px-4 border-b border-gray-200">{{ booking.seats|map(attribute='seatNumber')|join(", ") }}</td>
+            <td class="py-2 px-4 border-b border-gray-200">${{ booking.payment.discountedAmount }}</td>
+            <td class="py-2 px-4 border-b border-gray-200">
+                {{ booking.status }}
+                <form action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="inline">
+                    <button type="submit" class="ml-2 py-1 px-2 bg-red-500 text-white text-xs rounded">Cancel</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+   
+
+{% endblock %}
