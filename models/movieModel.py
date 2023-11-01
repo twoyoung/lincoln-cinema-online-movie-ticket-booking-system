@@ -63,7 +63,7 @@ class Booking(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey("users.id"))
-    user = relationship('Customer', back_populates='bookings')
+    user = relationship('User', back_populates='bookings')
     numberOfSeats = db.Column(db.Integer, nullable=False)
     createdOn = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Enum(BookingStatus), nullable=False)
@@ -84,20 +84,23 @@ class Booking(db.Model):
         return Booking.query.filter(Booking.status != BookingStatus.CANCELLED).all()
         
     def sendNotification(self, action: str = "booked") -> "Notification":
-        seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
-        if action == "booked":
-            message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} is confirmed. "
-        elif action == 'canceled':
-            message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} has been successfully canceled. "
-        else:
-            raise ValueError("Invalid action for notification")
-        
-        notification = Notification(
-            userId = self.userId,
-            message = message
-        )
-        user = "User".getUserById(self.userId)
+        from models import User
+        user = db.session.query(User).get(self.userId)
         if user.type == 'customer':
+
+            seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
+            if action == "booked":
+                message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} is confirmed. "
+            elif action == 'canceled':
+                message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} has been successfully canceled. "
+            else:
+                raise ValueError("Invalid action for notification")
+            
+            notification = Notification(
+                userId = self.userId,
+                message = message
+            )
+        
             user.notifications.append(notification)
             db.session.add(notification)
             db.session.commit()
@@ -164,6 +167,20 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey('users.id'))
     message = db.Column(db.String, nullable=False)
+    isRead = db.Column(db.Boolean, default=False)
+
+    @staticmethod
+    def numberOfUnreadNotifications():
+        return Notification.query.filter_by(isRead=False).count()
+    
+    @staticmethod
+    def getNotificationById(notificationId: int) -> 'Notification':
+        return Notification.query.get(notificationId)
+    
+    def markRead(self):
+        self.isRead = True
+        db.session.commit()
+
 
 class CinemaHall(db.Model):
     __tablename__ = 'cinemaHalls'

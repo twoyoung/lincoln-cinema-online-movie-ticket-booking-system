@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, url_for, redirect, flash, render_template
+from flask import Blueprint, jsonify, request, session, url_for, redirect, flash, render_template
 from controllers import MovieController, AuthController
 from functools import wraps
 
@@ -20,6 +20,15 @@ def admin_required(f):
         return f(*args, **kwargs)
     return wrapper
 
+def customer_required(f):
+    @login_required
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get('userType') != 'customer':
+            flash("You do not have the required permissions to access this page.")
+            return redirect(url_for('movies.home'))
+        return f(*args, **kwargs)
+    return wrapper
 
 movie_bp = Blueprint('movies', __name__)
 auth_bp = Blueprint('auth', __name__)
@@ -62,14 +71,15 @@ def selectSeats(screeningId):
     return MovieController.viewSeatChart(screeningId)
 
 @movie_bp.route('/book/<bookingId>/payment/online', methods=['GET', 'POST'])
-@login_required
+@customer_required
 def paymentOnline(bookingId):
     if request.method == 'POST':
         paymentMethod = request.form.get('paymentMethod')
-        useCoupon = request.form.get('useCoupon')
+        couponCode = request.form.get('couponCode')
         paymentData = {
             'bookingId': bookingId,
-            'paymentMethod': paymentMethod
+            'paymentMethod': paymentMethod,
+            'couponCode': couponCode
         }
 
         if paymentMethod == 'creditcard':
@@ -78,14 +88,9 @@ def paymentOnline(bookingId):
             paymentData['nameOnCard'] = request.form.get('nameOnCard')
 
         elif paymentMethod == 'debitcard':
-            paymentData['cardNumber'] = request.form.get('cardNumber')
+            paymentData['debitCardNumber'] = request.form.get('debitCardNumber')
             paymentData['bankName'] = request.form.get('bankName')
             paymentData['nameOnCard'] = request.form.get('nameOnCard')
-
-        if useCoupon:
-            paymentData['couponExpiryDate'] = request.form.get('couponExpiryDate')
-            paymentData['couponDiscount'] = request.form.get('couponDiscount')
-
 
         return MovieController.processBooking(session['userId'], paymentData=paymentData)
     return MovieController.showPaymentPageOnline(bookingId=bookingId)
@@ -95,29 +100,41 @@ def paymentOnline(bookingId):
 def paymentOnsite(bookingId):
     if request.method == 'POST':
         paymentMethod = request.form.get('paymentMethod')
-        useCoupon = request.form.get('useCoupon')
+        couponCode = request.form.get('couponCode')
 
         if paymentMethod == 'cash':
             paymentData = {
                 'bookingId': bookingId,
                 'paymentMethod': paymentMethod,
-                'receivedCash': request.form.get('receivedCash')
+                'receivedCash': request.form.get('receivedCash'),
+                'change': request.form.get('change'),
+                'couponCode': couponCode
             }
+            print(paymentData)
 
-        elif paymentMethod == 'eftPost':
+        elif paymentMethod == 'eftpos':
             paymentData = {
                 'bookingId': bookingId,
                 'paymentMethod': paymentMethod,
+                'couponCode': couponCode
             }
-        if useCoupon:
-            paymentData['couponExpiryDate'] = request.form.get('couponExpiryDate')
-            paymentData['couponDiscount'] = request.form.get('couponDiscount')
 
         return MovieController.processBooking(session['userId'], paymentData=paymentData)
     return MovieController.showPaymentPageOnsite(bookingId=bookingId)
 
-@movie_bp.route('/bookings', methods=['GET'])
+@movie_bp.route('/api/validate-coupon', methods=['POST'])
+def validateCoupon():
+    data = request.json
+    couponCode = data.get('couponCode')
+    return MovieController.validateCouponCode(couponCode)
+
+@movie_bp.route('/book/<bookingId>/confirm', methods=['GET'])
 @login_required
+def confirmBooking(bookingId):
+    return MovieController.confirmBooking(bookingId=bookingId)
+
+@movie_bp.route('/bookings', methods=['GET'])
+@customer_required
 def viewBookings():
     return MovieController.viewBookings(session['userId'])
 
@@ -166,6 +183,17 @@ def cancelMovie(movieId):
 def cancelScreening(screeningId):
     return MovieController.cancelScreening(session['userId'], screeningId)
 
+@movie_bp.route('/api/get-notifications')
+@customer_required
+def getNotifications():
+    return MovieController.getNotifications(session['userId'])
+
+@movie_bp.route('/api/mark-notification-read', methods=['POST'])
+def markNotificationRead():
+    notificationId = request.form['id']
+    return MovieController.markNotificationRead(notificationId)
+
+
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -186,6 +214,8 @@ def login():
 @login_required
 def logout():
     return AuthController.logout()
+
+
 
 
 

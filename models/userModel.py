@@ -76,6 +76,8 @@ class User(Person, db.Model):
     type = db.Column(db.String(255)) # discriminator field
     username = db.Column(db.String, unique=True, nullable=False)
     _password = db.Column(db.String, nullable=False)
+
+    bookings = db.relationship("Booking", back_populates='user')
     
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -156,6 +158,10 @@ class Admin(User):
         'polymorphic_identity': 'admin',
     }
 
+    @property
+    def bookings(self):
+        raise AttributeError("Admin does not have access to a bookings list.")
+
     def addMovie(self, newMovie: Movie) -> bool:
         existingMovie = Movie.query.filter_by(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
 
@@ -230,7 +236,6 @@ class FrontDeskStaff(User, BookingMixin):
 
 
 class Customer(User, BookingMixin):
-    bookings = db.relationship("Booking", back_populates='user')
     notifications = db.relationship("Notification", backref='users')
 
     __mapper_args__ = {

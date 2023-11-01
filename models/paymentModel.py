@@ -31,7 +31,7 @@ class Payment(db.Model):
     # @declared_attr
     # def booking(cls):
     #     return 
-    booking = relationship('Booking', backref='payments')
+    booking = relationship('Booking', back_populates='payment', uselist=False)
 
     __mapper_args__ = {
         'polymorphic_on': type,
@@ -40,7 +40,7 @@ class Payment(db.Model):
 
     def calcDiscount(self) -> float:
         discount = 0
-        if self.coupon and self.coupon.expiryDate > datetime.now():
+        if self.coupon and Coupon.couponIsValid(self.coupon.code):
             discount += self.coupon.discount
         return discount
 
@@ -91,6 +91,7 @@ class CashPayment(Payment):
 
     id = db.Column(db.Integer, db.ForeignKey('payments.id'), primary_key=True)
     receivedCash = db.Column(db.Float, nullable=False)  # Amount of cash received from the customer
+    change = db.Column(db.Float, nullable=False)
     
     __mapper_args__ = {
         'polymorphic_identity': 'cash'
@@ -103,7 +104,6 @@ class Eftpos(Payment):
     __tablename__ = 'eftpos'
 
     id = db.Column(db.Integer, db.ForeignKey('payments.id'), primary_key=True)
-    method = db.Column(db.String(50), nullable=False)  # This can be 'creditcard' or 'debitcard'
     
     __mapper_args__ = {
         'polymorphic_identity': 'eftpos'
@@ -112,7 +112,8 @@ class Eftpos(Payment):
 class Coupon(db.Model):
     __tablename__ = 'coupons'
     
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String, nullable=False)
     expiryDate = db.Column(db.DateTime, nullable=False)
     discount = db.Column(db.Float, nullable=False)
 
@@ -123,9 +124,21 @@ class Coupon(db.Model):
     #     db.session.commit()
     #     return coupon
     
-    # @staticmethod
-    # def getCouponById(couponId: str) -> "Coupon":
-    #     return Coupon.query.get(couponId)
+    @staticmethod
+    def getCouponByCode(code: str) -> "Coupon":
+        if Coupon.couponIsValid(code):
+            return Coupon.query.filter(code == Coupon.code).first()
+        else:
+            return None
+
+    @staticmethod
+    def couponIsValid(code: str) -> bool:
+        existingCoupon = Coupon.query.filter(code == Coupon.code).first()
+        if not existingCoupon:
+            return False
+        if existingCoupon.expiryDate < datetime.now():
+            return False
+        return True
 
 
 class Refund(db.Model):

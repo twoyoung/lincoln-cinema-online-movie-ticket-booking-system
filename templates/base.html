@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="/static/output.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>{% block title %}{% endblock %}</title>
 </head>
 
@@ -23,6 +24,23 @@
             <div class="space-x-4">
                 <a href="#" class="hover:bg-blue-500 px-3 py-2 rounded">Movies</a>
                 {% if session['userId'] %}
+                    {% if session['userType'] == 'customer' %}
+                        <a href="#" class="hover:bg-blue-500 px-3 py-2 rounded">My bookings</a>
+
+
+                        <!-- Notification icon with potential red dot for unread notifications -->
+                        <div class="relative inline-block mr-3" id="notification-icon">
+                            <i class="fas fa-bell text-xl cursor-pointer"></i>  <!-- Font Awesome Bell (Notification) Icon -->
+                            <div id="notification-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded shadow-md hidden">
+                                <ul class="py-2 text-black" id="notification-list">
+                                    
+                                </ul>
+                            </div>
+                            {% if has_unread_notifications %} <!-- Assuming you pass this variable from your backend -->
+                                <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                     <i class="fas fa-user"></i>  <!-- Font Awesome User Icon -->
                     
                     <a href="{{ url_for('auth.logout') }}" class="hover:bg-blue-500 px-3 py-2 rounded">Logout</a>
@@ -48,6 +66,73 @@
 {% endwith %}
 
   {% block content %}{% endblock %}
+
+
+  <script>
+    $(document).ready(function() {
+        let userType = "{{ session['userType'] }}";
+        // Check for unread notifications only if we're a customer
+        $(document).ready(function() {
+        // Check for unread notifications only if userType is a customer
+        if (userType === 'customer') {
+            $.getJSON("/api/get-notifications", function(data) {
+                if (data.numberOfUnreadNotifications > 0) {
+                    $("#notification-icon").append('<span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>');
+                }
+                let notificationList = $("#notification-list");
+                notificationList.empty();  // Clear previous notifications
+
+                if(data.notifications.length === 0) {
+                    // No notifications
+                    notificationList.append('<li class="px-4 py-2 text-center text-gray-500">No new notifications</li>');
+                } else {
+                    data.notifications.forEach(function(notification) {
+                        let notificationItem = `
+                        <li class="px-4 py-2 hover:bg-gray-200 notification-item" data-id="${notification.id}">
+                            <a href="${notification.url}">
+                                ${notification.message}
+                            </a>
+                        </li>`;
+                        notificationList.append(notificationItem);
+                    });
+                    console.log(notificationList);
+                }
+            });
+        }
+        });
+    });
+
+    $(document).ready(function() {
+        // Toggle dropdown visibility
+        $("#notification-icon .fa-bell").click(function() {
+            $("#notification-dropdown").toggle();
+        });
+
+        // Close dropdown if clicked outside
+        $(document).on("click", function(event) {
+            if (!$(event.target).closest("#notification-icon").length) {
+                $("#notification-dropdown").hide();
+            }
+        });
+
+        // ... your existing code to check for unread notifications
+    });
+
+
+    // Assuming each notification has a data-id attribute containing its ID
+    $(document).on('click', '.notification-item', function() {
+        event.preventDefault();
+        const notificationId = $(this).data('id');
+
+        // Make an AJAX call to mark the notification as read in the backend
+        $.post('/api/mark-notification-read', { id: notificationId }, function(response) {
+            if(response.success) {
+                // Provide feedback, like removing a highlight or the red dot indicator
+            }
+        });
+    });
+    </script>
+    
 
 </body>
 

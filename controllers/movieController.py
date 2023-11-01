@@ -1,5 +1,6 @@
-from flask import redirect, render_template, url_for
-from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos
+from flask import jsonify, redirect, render_template, url_for
+from sqlalchemy import Float
+from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification
 from typing import List
 from datetime import datetime
 
@@ -51,6 +52,7 @@ class MovieController:
     @staticmethod
     def showPaymentPageOnline(bookingId: int):
         booking = Booking.getBookingById(bookingId)
+        print(booking)
         return render_template("paymentOnline.html", booking=booking)
     
     @staticmethod
@@ -98,8 +100,7 @@ class MovieController:
                     originalAmount=booking.orderTotal,
                     discountedAmount=booking.orderTotal,
                     createdOn = datetime.now(),
-                    type = paymentData['cardType'],
-                    bookingId = paymentData['bookingId'],
+                    type = 'creditcard',
                     booking = booking,
                     creditCardNumber = paymentData['creditCardNumber'],
                     expiryDate = paymentData['expiryDate'],
@@ -109,10 +110,10 @@ class MovieController:
                 payment = DebitCard(
                     originalAmount = booking.orderTotal,
                     discountedAmount=booking.orderTotal,
+                    type = 'debitcard',
                     createdOn = datetime.now(),
-                    bookingId = paymentData['bookingId'],
                     booking = booking,
-                    cardNumber = paymentData['cardNumber'],
+                    cardNumber = paymentData['debitCardNumber'],
                     bankName = paymentData['bankName'],
                     nameOnCard = paymentData['nameOnCard']
                 )
@@ -121,36 +122,77 @@ class MovieController:
                 payment = CashPayment(
                     originalAmount = booking.orderTotal,
                     discountedAmount=booking.orderTotal,
+                    receivedCash = paymentData['receivedCash'],
+                    change = paymentData['change'],
+                    type = 'cash',
                     createdOn = datetime.now(),
-                    bookingId = paymentData['bookingId'],
                     booking = booking,
                 )
 
-            elif paymentData['paymentMethod'] == 'eftPos':
-                payment = CashPayment(
+            elif paymentData['paymentMethod'] == 'eftpos':
+                payment = Eftpos(
                     originalAmount = booking.orderTotal,
                     discountedAmount=booking.orderTotal,
+                    type = 'eftpos',
                     createdOn = datetime.now(),
-                    bookingId = paymentData['bookingId'],
                     booking = booking,
                 )
 
             else:
                 return "Invalid payment method", 400
             
-            if 'couponExpiryDate' in paymentData and 'couponDiscount' in paymentData:
-                coupon = Coupon(
-                    expiryDate = paymentData['couponExpiryDate'],
-                    discount=paymentData['couponDiscount']
-                )
+            if Coupon.couponIsValid(paymentData['couponCode']):
+                coupon = Coupon.getCouponByCode(paymentData['couponCode'])
+                payment.couponId = coupon.id
                 payment.coupon = coupon
-            
+
             Payment.createPayment(payment)
                 
-            return "Booking confirmed", 201
+            return redirect(url_for('movies.confirmBooking', bookingId = booking.id))
 
         else:
             return "Invalid booking data", 400
+        
+    @staticmethod
+    def validateCouponCode(couponCode: str):
+        if Coupon.couponIsValid(couponCode):
+            coupon = Coupon.getCouponByCode(couponCode)
+            return jsonify(valid=True, discount=coupon.discount)
+        else:
+            return jsonify(valid=False, discount=0)
+        
+    @staticmethod
+    def confirmBooking(bookingId: int):
+        booking = Booking.getBookingById(bookingId)
+        return render_template("bookingConfirm.html", booking=booking)
+    
+    @staticmethod
+    def getNotifications(userId: int):
+        user = User.getUserById(userId)
+        if user and user.type == 'customer':
+            notificationList = Notification.query.filter_by(userId = userId).all()
+            numberOfUnreadNotifications = Notification.numberOfUnreadNotifications()
+            # Convert the list of notifications into a list of dictionaries
+            notifications = [
+                {
+                    'id': notification.id,
+                    'message': notification.message,
+                    'isRead': notification.isRead,
+                    # Add more fields as needed
+                }
+                for notification in notificationList
+            ]
+            return jsonify(numberOfUnreadNotifications=numberOfUnreadNotifications, notifications=notifications)
+        
+    @staticmethod
+    def markNotificationRead(notificationId: int):
+        notification = Notification.getNotificationById(notificationId)
+        if notification:
+            notification.markRead()
+            return jsonify(success=True)
+        return jsonify(success=False)
+
+
         
     @staticmethod
     def viewBookings(userId: int):
