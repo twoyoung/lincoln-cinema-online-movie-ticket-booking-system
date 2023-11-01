@@ -16,3 +16,5 @@ models/__pycache__/userModel.cpython-310.pyc
 *.pyc
 
 /node_modules
+static/.DS_Store
+.DS_Store
