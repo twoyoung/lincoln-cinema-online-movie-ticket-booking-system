@@ -1,12 +1,12 @@
 import json
 from app import app, db
-from models import Movie, User, CinemaHall, CinemaHallSeat, Screening
+from models import Movie, User, CinemaHall, CinemaHallSeat, Screening, Coupon
 from datetime import datetime
 
 print("Starting script...")
 # Populate the database from JSON file
 def populateDatabaseFromJson(filename):
-    if filename == 'screenings.json':
+    if filename == 'seats.json':
         with open(filename, 'r') as file:
             data = json.load(file)
             print('Loading file...')
@@ -63,6 +63,16 @@ def populateDatabaseFromJson(filename):
                     db.session.add(seat)
                 print("Adding a seat to database...")
 
+            # Populate coupons
+            for couponData in data.get('coupons', []):
+                coupon = Coupon(
+                    code=couponData['code'],
+                    expiryDate=datetime.strptime(couponData['expiryDate'], '%Y-%m-%d %H:%M:%S'),
+                    discount=couponData['discount']
+                )
+                db.session.add(coupon)
+                print("Adding a coupon to database...")
+
             db.session.commit()
             print('Finished adding data to database...')
 
@@ -73,4 +83,4 @@ def populateDatabaseFromJson(filename):
 if __name__ == '__main__':
     print('Starting...')
     with app.app_context():
-        populateDatabaseFromJson('screenings.json')
+        populateDatabaseFromJson('seats.json')
