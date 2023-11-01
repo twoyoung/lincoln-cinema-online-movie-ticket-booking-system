@@ -1,0 +1,148 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Lincoln Cinema{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto px-4">
+    <div class="bg-white p-5 rounded shadow-lg w-full md:w-1/2 mx-auto">
+        <form action="{{ url_for('movies.paymentOnsite', bookingId=booking.id) }}" method="POST">
+
+            <!-- Booking Details Section -->
+             <!-- Booking Details Section -->
+            <h2 class="text-xl font-semibold mb-4">Booking Details</h2>
+            <p>Booking ID: {{ booking.id }}</p>
+            <p>User ID: {{ booking.userId }}</p>
+            <p>Seats: {% for seat in booking.seats %} {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}{% endfor %}
+            </p>
+            <p id="order-total">Total: ${{ booking.orderTotal }}</p>
+
+            <hr class="my-4">
+        
+            <!-- Payment Method Section -->
+            <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
+            <input type="hidden" name="bookingId" value="{{ booking.id }}">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Choose Payment Method:
+                </label>
+                <select name="paymentMethod" id="payment-method" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="eftpos">EFTPOS</option>
+                    <option value="cash">Cash</option>
+                </select>
+            </div>
+        
+            <!-- Coupon Code (assuming you want this) -->
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Apply Coupon Code:
+                </label>
+                <input type="text" name="couponCode" id="coupon-code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter coupon code">
+                <button id="apply-coupon" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Apply Coupon
+                </button>
+                <p id="discount-message" class="text-green-500 mt-2"></p>
+            </div>
+        
+            <!-- Cash Payment Section (initially hidden) -->
+            <div id="cash-section" class="hidden">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        Amount Paid:
+                    </label>
+                    <input type="text" name="receivedCash" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter amount paid by customer">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        Change Due:
+                    </label>
+                    <input id="change-due" name="change" class="p-2 border rounded" />
+                </div>
+            </div>
+        
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Process Payment
+            </button>
+        
+        </form>
+    </div>
+
+    <!-- JavaScript to handle showing the cash section -->
+    <script>
+        document.getElementById("payment-method").addEventListener("change", function () {
+            if (this.value === "cash") {
+                document.getElementById("cash-section").classList.remove("hidden");
+            } else {
+                document.getElementById("cash-section").classList.add("hidden");
+            }
+        });
+
+        document.getElementById("payment-method").addEventListener("change", function () {
+            if (this.value === "cash") {
+                document.getElementById("cash-section").classList.remove("hidden");
+            } else {
+                document.getElementById("cash-section").classList.add("hidden");
+            }
+        });
+
+        document.querySelector("#cash-section input").addEventListener("input", function () {
+            const originalTotalElement = document.getElementById("order-total");
+            let total;
+
+            if (originalTotalElement.classList.contains("line-through")) {
+                const newTotalElement = originalTotalElement.nextElementSibling;
+                total = parseFloat(newTotalElement.textContent.split('$')[1]);
+            } else {
+                total = parseFloat(originalTotalElement.textContent.split('$')[1]);
+            }
+
+            const paidAmount = parseFloat(this.value || 0); // Parse the amount or default to 0
+            const changeDue = (paidAmount - total).toFixed(2); // Calculate change and keep it to 2 decimal places
+            document.getElementById("change-due").value = changeDue;
+        });
+
+        // coupon code validation
+        document.getElementById("apply-coupon").addEventListener("click", function (e) {
+            e.preventDefault();
+            
+            const couponCode = document.getElementById("coupon-code").value;
+            if (!couponCode) return;
+
+            // Send AJAX request to validate the coupon
+            fetch('/api/validate-coupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ couponCode: couponCode }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    const originalTotalElement = document.getElementById("order-total");
+                    const originalTotal = parseFloat(originalTotalElement.textContent.split('$')[1]);
+                    const newTotal = originalTotal * (1 - data.discount);
+
+                    originalTotalElement.textContent = "Original Total: $"+ originalTotal;
+                    originalTotalElement.classList.add("line-through", "opacity-60");
+                    
+                    const newTotalElement = document.createElement('p');
+                    newTotalElement.textContent = "Discounted Total: $" + newTotal.toFixed(2);
+                    newTotalElement.classList.add("font-bold", "text-green-500"); // For emphasis using TailwindCSS
+                    originalTotalElement.insertAdjacentElement('afterend', newTotalElement);
+
+                    document.getElementById("discount-message").textContent = "Discount applied!";
+                } else {
+                    document.getElementById("discount-message").textContent = "Invalid coupon code.";
+                }
+            });
+        });
+
+    </script>
+</div>
+
+
+
+{% endblock %}

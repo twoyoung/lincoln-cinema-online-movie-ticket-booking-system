@@ -1,23 +1,75 @@
-<form action="/book/{{ bookingId }}/payment" method="post">
-    <select id="paymentMethod" name="paymentMethod">
-        <option value="creditcard">Credit Card</option>
-        <option value="debitcard">Debit Card</option>
-    </select>
-    
-    <!-- Credit Card Fields -->
-    <div id="creditCardFields">
-        <input type="text" name="creditCardNumber" placeholder="Credit Card Number">
-        <!-- ... other credit card-specific fields ... -->
-    </div>
 
-    <!-- Debit Card Fields -->
-    <div id="debitCardFields" style="display: none;">
-        <input type="text" name="cardNumber" placeholder="Debit Card Number">
-        <!-- ... other debit card-specific fields ... -->
-    </div>
+{% extends 'base.html' %}
 
-    <input type="submit" value="Pay">
-</form>
+{% block title %}Lincoln Cinema{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-5">Online Payment</h1>
+    <div class="bg-white p-5 rounded shadow-md">
+
+        <h2 class="text-xl font-semibold mb-4">Booking Details</h2>
+        <p>Booking ID: {{ booking.id }}</p>
+        <p>User ID: {{ booking.userId }}</p>
+        <p>Seats: {% for seat in booking.seats %} {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}{% endfor %}</p>
+        <p id="total-amount">Total: ${{ booking.orderTotal }}</p>
+
+        <form action="{{ url_for('movies.paymentOnline', bookingId=booking.id) }}" method="POST" class="mt-5">
+            <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
+            
+            <select id="paymentMethod" name="paymentMethod" class="mb-4 border rounded p-2 w-full">
+                <option value="creditcard">Credit Card</option>
+                <option value="debitcard">Debit Card</option>
+            </select>
+
+            <div id="creditCardFields">
+                <div class="mb-4">
+                    <label class="block mb-2">Card Number:</label>
+                    <input type="text" name="creditCardNumber" value="1234567890" class="border rounded w-full p-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block mb-2">Name on Card:</label>
+                    <input type="text" name="nameOnCard" value="Customer" class="border rounded w-full p-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block mb-2">Expiry Date:</label>
+                    <input type="text" name="expiryDate" value="03/27" placeholder="MM/YY" class="border rounded w-full p-2">
+                </div>
+            </div>
+
+            <div id="debitCardFields" style="display: none;">
+                <div class="mb-4">
+                    <label class="block mb-2">Card Number:</label>
+                    <input type="text" name="debitCardNumber" value="1234567890" class="border rounded w-full p-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block mb-2">Bank Name:</label>
+                    <input type="text" name="bankName" value="ANZ" class="border rounded w-full p-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block mb-2">Name on card:</label>
+                    <input type="text" name="nameOnCard" value="Customer" class="border rounded w-full p-2">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-2">Coupon code:</label>
+                <input type="text" id="coupon-code" name="couponCode" placeholder="Enter coupon code" class="border rounded w-full p-2">
+                <button id="apply-coupon" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Apply Coupon
+                </button>
+                <p id="discount-message" class="text-green-500 mt-2"></p>
+            </div>
+
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">Pay</button>
+        </form>
+    </div>
+</div>
 
 <script>
     document.getElementById('paymentMethod').addEventListener('change', function() {
@@ -29,4 +81,44 @@
             document.getElementById('debitCardFields').style.display = '';
         }
     });
+
+    // New coupon code validation
+    document.getElementById("apply-coupon").addEventListener("click", function (e) {
+        e.preventDefault();
+        
+        const couponCode = document.getElementById("coupon-code").value;
+        if (!couponCode) return;
+
+        // Send AJAX request to validate the coupon
+        fetch('/api/validate-coupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ couponCode: couponCode }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                const originalTotalElement = document.getElementById("total-amount");
+;
+                const originalTotal = parseFloat(originalTotalElement.textContent.split('$')[1]);
+                const newTotal = originalTotal * (1 - data.discount);
+
+                originalTotalElement.textContent = "Original Total: $" + originalTotal;
+                originalTotalElement.classList.add("line-through", "opacity-60");
+                
+                const newTotalElement = document.createElement('p');
+                newTotalElement.textContent = "Discounted Total: $" + newTotal.toFixed(2);
+                newTotalElement.classList.add("font-bold", "text-green-500");
+                originalTotalElement.insertAdjacentElement('afterend', newTotalElement);
+
+                document.getElementById("discount-message").textContent = "Discount applied!";
+            } else {
+                document.getElementById("discount-message").textContent = "Invalid coupon code.";
+            }
+        });
+    });
 </script>
+
+{% endblock %}
