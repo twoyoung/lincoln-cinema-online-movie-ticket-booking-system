@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from sqlalchemy.orm import relationship, backref
 from app import db
 from typing import List
@@ -18,8 +19,21 @@ class BookingStatus(Enum):
     CONFIRMED = 2
     CANCELLED = 3
 
+class ScreeningValidationMixin:
+    def isActiveScreening(self) -> bool:
+        if self.status == ScreeningStatus.ACTIVE:
+            return True
+        return False
+    
+    def isFutureScreening(self) -> bool:
+        today = datetime.now()
+        now = datetime.now()
+        if self.screeningDate > today or (self.screeningDate == today and self.startTime > now):
+            return True
+        return False
+
 # Define the Movie table
-class Movie(db.Model):
+class Movie(db.Model, ScreeningValidationMixin):
     __tablename__ = 'movies'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -37,7 +51,11 @@ class Movie(db.Model):
     screenings = relationship("Screening", backref="movies")
 
     def getScreenings(self) -> List["Screening"]:
-        return self.screenings
+        screeningsList = []
+        for screening in self.screenings:
+            if screening and screening.isActiveScreening() and screening.isFutureScreening():
+                screeningsList.append(screening)
+        return screeningsList
     
     def addScreening(self, screening) -> bool:
         if screening not in self.screenings:
@@ -112,7 +130,7 @@ class Booking(db.Model):
 
 
 
-class Screening(db.Model):
+class Screening(db.Model, ScreeningValidationMixin):
     __tablename__ = 'screenings'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -161,7 +179,7 @@ class Screening(db.Model):
     @staticmethod
     def getScreeningById(screeningId: int) -> "Screening":
         screening = Screening.query.get(screeningId)
-        if screening and screening.status == ScreeningStatus.ACTIVE:
+        if screening and screening.isActiveScreening() and screening.isFutureScreening():
             return screening
         else:
             return None

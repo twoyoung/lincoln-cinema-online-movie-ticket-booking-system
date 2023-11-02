@@ -27,7 +27,7 @@ class MovieController:
     def viewMovieDetailsAndScreenings(movieId: int):
         movie = Movie.getMovieById(movieId)
         if movie:
-            screeningList = movie.screenings
+            screeningList = movie.getScreenings()
 
             # Check if 'userType' exists in session. If not, default to 'guest'
             userType = session.get('userType', 'guest')
