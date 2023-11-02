@@ -5,13 +5,13 @@ from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound
 
 class MovieStatus(Enum):
-    ACTIVE = "active"
-    CANCELLED = "cancelled"
+    ACTIVE = "ACTIVE"
+    CANCELLED = "CANCELLED"
 
 class ScreeningStatus(Enum):
-    ACTIVE = "active"
-    CANCELLED = "cancelled"
-    FINISHED = "finished"
+    ACTIVE = "ACTIVE"
+    CANCELLED = "CANCELLED"
+    FINISHED = "FINISHED"
 
 class BookingStatus(Enum):
     PENDING = 1

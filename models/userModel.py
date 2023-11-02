@@ -175,7 +175,13 @@ class Admin(User):
 
     def addScreening(self, newScreening: Screening) -> bool:
         existingScreening = Screening.query.filter(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
-
+        # even the screening is new, still need to check time crashing and location crashing
+        #
+        #
+        #
+        #
+        #
+        #
         if not existingScreening:
             db.session.add(newScreening)
             movie = Movie.getMovieById(newScreening.movieId)
@@ -193,9 +199,17 @@ class Admin(User):
         else:
             movie.status = MovieStatus.CANCELLED.value
 
-            currentDate = datetime.now().date()
-            currentTime = datetime.now().time()
+            currentDate = datetime.now()  
+            currentTime = datetime.now()
             for screening in movie.screenings:
+                # print("currentDate:" )
+                # print(type(currentDate))
+                # print("screeningDate:")
+                # print(type(screening.screeningDate))
+                # print("screening.startTime:")
+                # print(type(screening.startTime))
+                # print("currentTime:")
+                # print(type(currentTime))
                 if screening.screeningDate > currentDate or (screening.screeningDate == currentDate and screening.startTime > currentTime):
                     self.cancelScreening(screening)
 
@@ -205,8 +219,8 @@ class Admin(User):
 
     def cancelScreening(self, screening: Screening):
         existingScreening = Screening.getScreeningById(screening.id)
-        currentDate = datetime.now().date()
-        currentTime = datetime.now().time()
+        currentDate = datetime.now()
+        currentTime = datetime.now()
         if not existingScreening:
             return "Screening not found"
         elif existingScreening.status == ScreeningStatus.CANCELLED.value:

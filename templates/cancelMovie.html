@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}screenings{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto mt-20 p-6 shadow-md rounded-lg max-w-4xl bg-gray-100 font-sans antialiased">
+    <h2 class="text-2xl font-semibold mb-4">Cancel a Movie</h2>
+
+    <table class="w-full table-auto">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">Title</th>
+                <th class="px-4 py-2">Status</th>
+                <th class="px-4 py-2">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in movies %}
+            <tr>
+                <td class="border px-4 py-2">{{ movie.title }}</td>
+                <td class="border px-4 py-2">{{ movie.status }}</td>
+                <td class="border px-4 py-2">
+                    <button onclick="showModal({{ movie.id }})" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal structure -->
+<div id="modal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-xl max-h-[80vh] overflow-y-auto m-auto">
+        <p>Are you sure you want to cancel this movie?</p>
+        <form id="modalForm" action="" method="post" class="mt-4">
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mr-2">
+                Confirm
+            </button>
+            <button type="button" onclick="hideModal()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var baseURL = "{{ url_for('movies.cancelMovie', movieId='MOVIE_ID') }}";
+    function showModal(movieId) {
+        document.getElementById('modal').style.display = 'flex';
+        var actionURL = baseURL.replace('MOVIE_ID', movieId);
+        document.getElementById('modalForm').action = actionURL;
+    }
+
+    function hideModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+</script>
+
+{% endblock %}

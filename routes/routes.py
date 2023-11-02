@@ -173,10 +173,16 @@ def addScreening(movieId):
         return MovieController.addScreening(session['userId'], newScreeningData)
     return MovieController.showAddScreeningPage(movieId)    
 
-@movie_bp.route('/cancel/movie/<movieId>', methods=['DELETE'])
+@movie_bp.route('/cancel/movie', methods=['GET'])
+@movie_bp.route('/cancel/movie/<movieId>', methods=['GET', 'POST'])
 @admin_required
-def cancelMovie(movieId):
-    return MovieController.cancelMovie(session['userId'], movieId)
+def cancelMovie(movieId=None):
+    if movieId and request.method == 'POST':
+        return MovieController.cancelMovie(session['userId'], movieId)
+    elif movieId:
+        return redirect(url_for('movies.showMovieDetails',movieId=movieId))
+    else:
+        return MovieController.showCancelMoviePage()
 
 @movie_bp.route('/cancel/screening/<screeningId>', methods=['DELETE'])
 @admin_required

@@ -266,11 +266,26 @@ class MovieController:
             return "Unauthorized", 401
         
     @staticmethod
+    def showCancelMoviePage():
+        movies = Movie.query.all()
+        return render_template("cancelMovie.html", movies=movies)
+        
+    @staticmethod
     def cancelMovie(userId: int, movieId: int):
         user = User.getUserById(userId)
         if user.type == 'admin':
             movie = Movie.getMovieById(movieId)
-            return user.cancelMovie(movie)
+            if movie:
+                success = user.cancelMovie(movie)
+                if success:
+                    flash("Movie cancelled successfully")
+                    return redirect(url_for('movies.cancelMovie'))
+                else:
+                    flash("Movie cancel failed")
+                    return redirect(url_for('movies.cancelMovie'))
+            else:
+                flash("Movie not found")
+                return redirect(url_for('movies.cancelMovie'))
         else:
             return "Unauthorized", 401
         
