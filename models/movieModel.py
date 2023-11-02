@@ -31,6 +31,16 @@ class ScreeningValidationMixin:
         if self.screeningDate > today or (self.screeningDate == today and self.startTime > now):
             return True
         return False
+    
+class BookingListFilterMixin:
+    @staticmethod
+    def filteredBooking(bookingList: ["Booking"]) -> ["Booking"]:
+        filteredBookingList = []
+        for booking in bookingList:
+            if booking.status == BookingStatus.PENDING or booking.status == BookingStatus.CONFIRMED:
+                filteredBookingList.append(booking)
+        return filteredBookingList
+
 
 # Define the Movie table
 class Movie(db.Model, ScreeningValidationMixin):
@@ -113,9 +123,9 @@ class Booking(db.Model):
 
             seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
             if action == "booked":
-                message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} is confirmed. "
+                message = f"Booking confirmed!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
             elif action == 'canceled':
-                message = f"Your booking with ID {self.id} for movie {self.screening.movie.title} on {self.screening.screeningDate} {self.screening.startTime} at seat {seatNumbers} has been successfully canceled. "
+                message = f"Booking cancelled successfully!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
             else:
                 raise ValueError("Invalid action for notification")
             
@@ -130,7 +140,7 @@ class Booking(db.Model):
 
 
 
-class Screening(db.Model, ScreeningValidationMixin):
+class Screening(db.Model, ScreeningValidationMixin, BookingListFilterMixin):
     __tablename__ = 'screenings'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -147,18 +157,8 @@ class Screening(db.Model, ScreeningValidationMixin):
     bookings = relationship('Booking', back_populates='screening')
 
     def getSeatChart(self):
-        # allSeats = set(self.hall.seats)
-        # reservedSeats = {seat for booking in self.bookings for seat in booking.seats}
-        # availableSeats = allSeats - reservedSeats
-        # seatChart = {
-        #     'available': list(availableSeats),
-        #     'reserved': list(reservedSeats)
-        # }
-        # return seatChart
-
         allSeats = {seat.seatNumber: seat for seat in self.hall.seats}
-        reservedSeats = {seat for booking in self.bookings for seat in booking.seats}
-        print(reservedSeats)
+        reservedSeats = {seat for booking in BookingListFilterMixin.filteredBooking(self.bookings) for seat in booking.seats}
         rows = sorted(set(seat.seatRow for seat in allSeats.values()))
         maxColumns = max([seat.seatColumn for seat in allSeats.values()])
 
@@ -169,7 +169,7 @@ class Screening(db.Model, ScreeningValidationMixin):
                 seatNumber = f"{row}{col}"
                 seat = allSeats.get(seatNumber)
                 if seat:
-                    status = 'reserved' if seatNumber in reservedSeats else 'available'
+                    status = 'reserved' if seat in reservedSeats else 'available'
                     seatRow.append({'seatNumber': seatNumber, 'status': status, 'seatObject': seat})
                 else:
                     seatRow.append(None)
