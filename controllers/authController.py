@@ -5,26 +5,28 @@ class AuthController:
 
     @staticmethod
     def showSignup():
-        return render_template("signup.html")
+        return render_template("signup.html", hide_flash_messages=True)
 
     @staticmethod
     def showLogin():
-        return render_template("login.html")
+        return render_template("login.html", hide_flash_messages=True)
 
     @staticmethod
-    def register(username: str, password: str) -> bool:
-        return Guest.register(username, password)
+    def register(username: str, password: str):
+        success, message =  Guest.register(username, password)
+        flash(message, 'success' if success else 'error')
+        return redirect(url_for('auth.signup'))
+        
     
     @staticmethod
-    def login(username: str, password: str) -> bool:
+    def login(username: str, password: str):
         success, message = User.login(username, password)
-        
         if success:
             flash(message, 'success')
             return redirect(url_for('movies.home'))
         else:
-            flash(message, 'danger')
-            return render_template('login.html')
+            flash(message, 'error')
+            return redirect(url_for('auth.login'))
     
     @staticmethod
     def logout() -> bool:

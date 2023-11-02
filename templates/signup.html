@@ -1,0 +1,67 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Lincoln Cinema{% endblock %}
+
+{% block content %}
+
+<div class="rounded-lg shadow-md w-96 bg-gradient-to-br from-purple-100 via-blue-100 to-blue-200 p-10 rounded-lg shadow-md w-96 mx-auto mt-12">
+    <h2 class="text-2xl font-bold mb-5 text-gray-700">Join Lincoln Cinema</h2>
+
+    <form id="signUpForm" action="{{ url_for('auth.signup') }}" method="POST" class="space-y-5">
+        <div class="space-y-2">
+            <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
+            <input id="username" name="username" type="text" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500">
+            <p id="usernameError" class="text-red-500 text-xs italic hidden">Please enter a username.</p>
+        </div>
+
+        <div class="space-y-2">
+            <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
+            <input id="password" name="password" type="password" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500">
+            <p id="passwordError" class="text-red-500 text-xs italic hidden">Please enter a password.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="text-red-700 px-4 rounded relative" role="alert">
+                            Oops! {{ message }}
+                        </div>
+                    {% elif category == 'success' %}
+                        <div class="text-green-700 px-4 rounded relative" role="alert">
+                            {{ message }} Log in now!
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <button type="submit" class="w-full bg-indigo-500 text-white p-2 rounded hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">Sign Up</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("signUpForm").addEventListener("submit", function(event) {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        var usernameError = document.getElementById("usernameError");
+        var passwordError = document.getElementById("passwordError");
+
+        // Reset error messages
+        usernameError.classList.add("hidden");
+        passwordError.classList.add("hidden");
+
+        if (!username) {
+            event.preventDefault();
+            usernameError.classList.remove("hidden");
+        }
+
+        if (!password) {
+            event.preventDefault();
+            passwordError.classList.remove("hidden");
+        }
+    });
+</script>
+
+{% endblock %}

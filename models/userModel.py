@@ -55,17 +55,19 @@ class Person(General):
 
 class Guest(General):
     @staticmethod
-    def register(username: str, password: str) -> bool:
+    def register(username: str, password: str) -> Tuple[bool, str]:
         existingUser = User.query.filter_by(username=username).first()
         if existingUser:
-            return False
-        newUser = Customer(username, password)
+            return False, "Username already exists."
+        newUser = Customer(username=username)
+        newUser.password = password
         try:
             db.session.add(newUser)
             db.session.commit()
+            return True, "User registered successfully."
         except Exception as e:
             db.session.rollback()
-            return False
+            return False, str(e)
         
 
 # Define the User table
