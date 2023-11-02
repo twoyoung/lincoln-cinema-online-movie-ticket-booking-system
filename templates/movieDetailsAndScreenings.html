@@ -170,33 +170,6 @@
     }
 
 
-// generate date and display screenings:
-//     function generateDates(daysToGenerate = 365) {
-//     let dropdown = document.getElementById('dateDropdown');
-//     let today = new Date();
-
-//     for (let i = 0; i < daysToGenerate; i++) {
-//         let currentDate = new Date(today);
-//         currentDate.setDate(today.getDate() + i);
-
-//         // Get the date string in MM/DD/YYYY format
-//         let dateParts = currentDate.toLocaleDateString('en-US', {
-//             year: 'numeric',
-//             month: '2-digit',
-//             day: '2-digit'
-//         }).split('/');
-
-//         // Reorder to get the YYYY-MM-DD format
-//         let formattedDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
-        
-//         let option = document.createElement('option');
-//         option.value = formattedDate;
-//         option.textContent = formattedDate;
-//         dropdown.appendChild(option);
-//     }
-// }
-
-
     document.getElementById('dateDropdown').addEventListener('change', function() {
         let selectedDate = this.value;
         showScreenings(selectedDate);
@@ -217,19 +190,6 @@
     }
 
     window.onload = function() {
-    // generateDates();
-
-    // Get today's local date in YYYY-MM-DD format
-    // let currentDate = new Date();
-    // let dateParts = currentDate.toLocaleDateString('en-US', {
-    //     year: 'numeric',
-    //     month: '2-digit',
-    //     day: '2-digit'
-    // }).split('/');
-    // let today = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
-
-    // Get the firstDate from the data-firstdate attribute
-    // let firstDateElement = document.getElementById('firstDateStorage');
 
     let dropdown = document.getElementById('dateDropdown');
     dropdown.value = dropdown.getAttribute('data-firstdate');
