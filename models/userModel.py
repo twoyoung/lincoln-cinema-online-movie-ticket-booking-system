@@ -168,72 +168,64 @@ class Admin(User):
     def bookings(self):
         raise AttributeError("Admin does not have access to a bookings list.")
 
-    def addMovie(self, newMovie: Movie) -> bool:
+    def addMovie(self, newMovie: Movie) -> Tuple[bool, str]:
         existingMovie = Movie.query.filter(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
-        # print(existingMovie)
 
         if not existingMovie:
             db.session.add(newMovie)
             db.session.commit()
-            return True
-        return False
+            return True, "Movie added successfully."
+        return False, "Movie has already been in the database"
 
-    def addScreening(self, newScreening: Screening) -> bool:
+    def addScreening(self, newScreening: Screening) -> Tuple[bool, str]:
         existingScreening = Screening.query.filter(Screening.screeningDate == newScreening.screeningDate, Screening.startTime == newScreening.startTime, Screening.hallId == newScreening.hallId).first()
         # even the screening is new, still need to check time crashing and location crashing
-        #
-        #
-        #
-        #
-        #
-        #
-        if not existingScreening:
+        if existingScreening:
+            return False, "Screening already exists."
+        else:
+            futureActiveScreeningList = []
+            for screening in Screening.query.all():
+                if screening.isActiveScreening() and screening.isFutureScreening():
+                    futureActiveScreeningList.append(screening)
+            for screening in futureActiveScreeningList:
+                if newScreening.screeningDate.date() == screening.screeningDate.date() and newScreening.hallId == screening.hallId and ((newScreening.startTime.time() > screening.startTime.time() and newScreening.startTime.time() < screening.endTime.time()) or (newScreening.endTime.time() > screening.startTime.time() and newScreening.endTime.time() < screening.endTime.time())):
+                    return False, "Time crash."
             db.session.add(newScreening)
             movie = Movie.getMovieById(newScreening.movieId)
-            movie.screenings.append(newScreening)
+            if movie.status == MovieStatus.ACTIVE:
+                movie.screenings.append(newScreening)
             db.session.commit()
-            return True
-        return False
+            return True, "Screening added successfully."
+        
     
-    def cancelMovie(self, movie: Movie):
+    def cancelMovie(self, movie: Movie) -> Tuple[bool, str]:
         existingMovie = Movie.getMovieById(movie.id)
         if not existingMovie:
-            return "Movie not found"
-        elif existingMovie.status == MovieStatus.CANCELLED.value:
-            return "Movie is already cancelled"
+            return False, "Movie not found."
+        elif existingMovie.status == MovieStatus.CANCELLED:
+            return False, "Movie is already cancelled"
         else:
-            movie.status = MovieStatus.CANCELLED.value
+            movie.status = MovieStatus.CANCELLED
 
-            currentDate = datetime.now()  
-            currentTime = datetime.now()
             for screening in movie.screenings:
-                # print("currentDate:" )
-                # (type(currentDate))
-                # print("screeningDate:")
-                # print(type(screening.screeningDate))
-                # print("screening.startTime:")
-                # print(type(screening.startTime))
-                # print("currentTime:")
-                # print(type(currentTime))
-                if screening.screeningDate > currentDate or (screening.screeningDate == currentDate and screening.startTime > currentTime):
+                if screening and screening.isFutureScreening() and screening.isActiveScreening():
                     self.cancelScreening(screening)
 
             db.session.commit()
-            return "Movie and its future screenings cancelled successfully"
+            return True, "Movie cancelled successfully."
 
 
-    def cancelScreening(self, screening: Screening):
+    def cancelScreening(self, screening: Screening) -> Tuple[bool, str]:
         existingScreening = Screening.getScreeningById(screening.id)
-        currentDate = datetime.now()
-        currentTime = datetime.now()
+
         if not existingScreening:
-            return "Screening not found"
-        elif existingScreening.status == ScreeningStatus.CANCELLED.value:
-            return "Screening is already cancelled"
-        elif screening.screeningDate < currentDate or (screening.screeningDate == currentDate and screening.endTime < currentTime):
-            return "Screening is already finished"
+            return False, "Screening not found"
+        elif not screening.isActiveScreening():
+            return False, "Screening is already cancelled"
+        elif not screening.isFutureScreening():
+            return False, "Screening already finished"
         else:
-            screening.status = ScreeningStatus.CANCELLED.value
+            screening.status = ScreeningStatus.CANCELLED
 
             for booking in screening.bookings:
                 success = BookingMixin.cancelBooking(booking)
@@ -246,7 +238,7 @@ class Admin(User):
                         booking.sendNotification(action="canceled")
 
             db.session.commit()
-            return "Screening and its bookings cancelled successfully."
+            return True, "Screening and its bookings cancelled successfully."
 
 
 class FrontDeskStaff(User, BookingMixin):

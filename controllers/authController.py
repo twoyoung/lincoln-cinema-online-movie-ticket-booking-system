@@ -14,8 +14,12 @@ class AuthController:
     @staticmethod
     def register(username: str, password: str):
         success, message =  Guest.register(username, password)
-        flash(message, 'success' if success else 'error')
-        return redirect(url_for('auth.signup'))
+        if success:
+            flash(message, 'success')
+            return redirect(url_for('auth.login'))
+        else:
+            flash(message, 'error')
+            return redirect(url_for('auth.signup'))
         
     
     @staticmethod

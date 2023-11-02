@@ -1,8 +1,9 @@
 from flask import jsonify, redirect, render_template, url_for, flash, get_flashed_messages, session
 from sqlalchemy import desc
-from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification
+from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification, MovieStatus
 from typing import List
 from datetime import datetime
+from collections import defaultdict
 
 class MovieController:
     @staticmethod
@@ -25,20 +26,27 @@ class MovieController:
 
     @staticmethod
     def viewMovieDetailsAndScreenings(movieId: int):
-        movie = Movie.getMovieById(movieId)
+        movie = Movie.getActiveMovieById(movieId)
         if movie:
             screeningList = movie.getScreenings()
 
+            # Organize screenings data by date
+            screeningsByDate = defaultdict(list)
+            for screening in screeningList:
+                screeningsByDate[screening.screeningDate.date()].append(screening)
+
             # Check if 'userType' exists in session. If not, default to 'guest'
             userType = session.get('userType', 'guest')
-            return render_template("movieDetailsAndScreenings.html", screeningList=screeningList, movie=movie, userType=userType)
+            dateList = list(sorted(screeningsByDate.keys(), reverse=False))
+            print(dateList)
+            return render_template("movieDetailsAndScreenings.html", dateList=dateList, screeningsByDate=screeningsByDate, movie=movie, userType=userType)
         else:
-            flash("Movie does not exist.", 'error')
+            flash("Movie does not exist or has been cancelled.", 'error')
             return redirect(url_for('movies.showMovies'))
         
     @staticmethod
     def viewSeatChart(screeningId: int):
-        screening = Screening.getScreeningById(screeningId)
+        screening = Screening.getActiveScreeningById(screeningId)
         if screening:
             seatMatrix = screening.getSeatChart()
             return render_template("seatChart.html", seatMatrix=seatMatrix, screeningId=screeningId)
@@ -69,7 +77,7 @@ class MovieController:
             booking.user = user
             booking.screeningId = screeningId
             booking.status = BookingStatus.PENDING
-            screening = Screening.getScreeningById(screeningId)
+            screening = Screening.getActiveScreeningById(screeningId)
             booking.screening = screening
             booking.numberOfSeats = len(selectedSeats)
             booking.createdOn = datetime.now()
@@ -220,51 +228,41 @@ class MovieController:
     @staticmethod
     def addMovie(userId: int, newMovieData: dict):
         user = User.getUserById(userId)
-        if user.type == 'admin':
-            newMovie = Movie(
-                title = newMovieData['title'],
-                language = newMovieData['language'],
-                genre = newMovieData['genre'],
-                releaseDate = datetime.strptime(newMovieData['releaseDate'], '%Y-%m-%d'),
-                durationMins = newMovieData['durationMins'],
-                country = newMovieData['country'],
-                description = newMovieData['description']
-            )
-            success = user.addMovie(newMovie)
-            if success:
-                flash("The movie was added successfully")
-                return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newMovie.id))
-            else:
-                flash("The movie was not added successfully")
-                return redirect(url_for('movies.addMovie'))
+        newMovie = Movie(
+            title = newMovieData['title'],
+            language = newMovieData['language'],
+            genre = newMovieData['genre'],
+            releaseDate = datetime.strptime(newMovieData['releaseDate'], '%Y-%m-%d'),
+            durationMins = newMovieData['durationMins'],
+            country = newMovieData['country'],
+            description = newMovieData['description']
+        )
+        success, message = user.addMovie(newMovie)
+        if success:
+            flash(message, 'success')
+            return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newMovie.id))
         else:
-            return "Unauthorized"
-
-    @staticmethod
-    def showAddScreeningPage(movieId):
-        return render_template('addScreening.html', movieId=movieId)
+            flash(message, 'error')
+            return redirect(url_for('movies.addMovie'))
+       
     
     @staticmethod
     def addScreening(userId: int, newScreeningData: dict):
         user = User.getUserById(userId)
-        if user.type == 'admin':
-            newScreening = Screening(
-                screeningDate = datetime.strptime(newScreeningData['screeningDate'], '%Y-%m-%d'),
-                startTime = datetime.strptime(newScreeningData['startTime'],'%H:%M'),
-                endTime = datetime.strptime(newScreeningData['endTime'],'%H:%M'),
-                hallId = newScreeningData['hallId'],
-                movieId = newScreeningData['movieId']
-            )
-            # print(newScreeningData)
-            success =  user.addScreening(newScreening)
-            if success:
-                flash("New Screening added successfully")
-                return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newScreeningData['movieId']))
-            else:
-                flash("The Screening was not added successfully")
-                return redirect(url_for('movies.addScreening', movieId = newScreeningData['movieId']))
+        newScreening = Screening(
+            screeningDate = datetime.strptime(newScreeningData['screeningDate'], '%Y-%m-%d'),
+            startTime = datetime.strptime(newScreeningData['startTime'],'%H:%M'),
+            endTime = datetime.strptime(newScreeningData['endTime'],'%H:%M'),
+            hallId = newScreeningData['hallId'],
+            movieId = newScreeningData['movieId']
+        )
+        success, message =  user.addScreening(newScreening)
+        if success:
+            flash(message, 'success')
+            
         else:
-            return "Unauthorized", 401
+            flash(message, 'error')
+        return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newScreeningData['movieId']))
         
     @staticmethod
     def showCancelMoviePage():
@@ -274,41 +272,33 @@ class MovieController:
     @staticmethod
     def cancelMovie(userId: int, movieId: int):
         user = User.getUserById(userId)
-        if user.type == 'admin':
-            movie = Movie.getMovieById(movieId)
-            if movie:
-                success = user.cancelMovie(movie)
-                if success:
-                    flash("Movie cancelled successfully")
-                    return redirect(url_for('movies.cancelMovie'))
-                else:
-                    flash("Movie cancel failed")
-                    return redirect(url_for('movies.cancelMovie'))
+        movie = Movie.getMovieById(movieId)
+        if movie:
+            success, message = user.cancelMovie(movie)
+            if success:
+                flash(message, 'success')
+                return redirect(url_for('movies.cancelMovie'))
             else:
-                flash("Movie not found")
+                flash(message, 'error')
                 return redirect(url_for('movies.cancelMovie'))
         else:
-            return "Unauthorized", 401
+            flash("Movie not found", 'error')
+            return redirect(url_for('movies.cancelMovie'))
+
         
     @staticmethod
     def cancelScreening(userId: int, screeningId: int):
         user = User.getUserById(userId)
-        if user.type == 'admin':
-            screening = Screening.getScreeningById(screeningId)
-            result = user.cancelScreening(screening)
-            
-            if isinstance(result, tuple) and len(result) == 2 and result[1] == 401:  # If unauthorized
-                flash('Unauthorized to cancel the screening.', 'error')
-                return redirect(url_for('movies.screeningList'))
+        screening = Screening.getScreeningById(screeningId)
+        success, message = user.cancelScreening(screening)
+        
+        if success:
+            flash(message, 'success')
 
-            if result == "Screening and its bookings cancelled successfully.":
-                flash('Screening and its bookings cancelled successfully.', 'success')
-            else:
-                flash(result, 'error')
-            
-            return redirect(url_for('movies.showMovieScreenings', movieId=screening.movie.id))
         else:
-            return "Unauthorized", 401
+            flash(message, 'error')
+        
+        return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId=screening.movie.id))
 
 
         

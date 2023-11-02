@@ -45,14 +45,14 @@
                     <label class="block mb-2 font-bold">
                         Amount Paid:
                     </label>
-                    <input type="text" name="receivedCash" class="border rounded w-full p-2" placeholder="Enter amount paid by customer">
+                    <input type="number" name="receivedCash" min="0" step="0.01" class="border rounded w-full p-2" placeholder="Enter amount paid by customer">
                 </div>
 
                 <div class="mb-4">
                     <label class="block mb-2 font-bold">
                         Change Due:
                     </label>
-                    <input id="change-due" name="change" class="border rounded w-full p-2" />
+                    <input id="change-due" type="number" name="change" min="0" step="0.01" class="border rounded w-full p-2" />
                 </div>
             </div>
 
@@ -144,6 +144,9 @@
                     originalTotalElement.insertAdjacentElement('afterend', newTotalElement);
 
                     document.getElementById("discount-message").textContent = "Discount applied!";
+                    if (document.querySelector("#cash-section input").value){
+                        document.getElementById("change-due").value = (document.querySelector("#cash-section input").value - newTotal).toFixed(2);
+                    }
                 } else {
                     document.getElementById("discount-message").textContent = "Invalid coupon code.";
                 }

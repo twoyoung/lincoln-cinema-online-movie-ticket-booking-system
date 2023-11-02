@@ -10,7 +10,9 @@
     <table class="w-full table-auto">
         <thead>
             <tr>
+                <th class="px-4 py-2">Movie ID</th>
                 <th class="px-4 py-2">Title</th>
+                <th class="px-4 py-2">Release Year</th>
                 <th class="px-4 py-2">Status</th>
                 <th class="px-4 py-2">Action</th>
             </tr>
@@ -18,8 +20,10 @@
         <tbody>
             {% for movie in movies %}
             <tr>
+                <td class="border px-4 py-2">#{{ movie.id }}</td>
                 <td class="border px-4 py-2">{{ movie.title }}</td>
-                <td class="border px-4 py-2">{{ movie.status }}</td>
+                <td class="border px-4 py-2">{{ movie.releaseDate.strftime('%Y')  }}</td>
+                <td class="border px-4 py-2">{{ movie.status.name }}</td>
                 <td class="border px-4 py-2">
                     <button onclick="showModal({{ movie.id }})" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
                         Cancel

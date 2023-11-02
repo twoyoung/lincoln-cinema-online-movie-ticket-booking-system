@@ -32,13 +32,14 @@
                         <!-- Notification icon with potential red dot for unread notifications -->
                         <div class="relative inline-block mr-3" id="notification-icon">
                             <i class="fas fa-envelope text-xl cursor-pointer px-2"></i>
-                            <div id="notification-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded shadow-md hidden z-50">
+                            <div id="notification-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded shadow-md hidden z-50 max-h-64 overflow-y-auto">
                                 <ul class="py-2 text-black" id="notification-list"></ul>
                             </div>
                             {% if has_unread_notifications %}
                                 <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
                             {% endif %}
                         </div>
+                        
 
                     {% elif session['userType'] == 'staff' %}
                         <a href="{{ url_for('movies.viewBookings') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">All bookings</a>
@@ -145,7 +146,7 @@
             }
         });
 
-        $(document).on('click', '.notification-item', function () {
+        $(document).on('click', '.notification-item a', function (event) {
             event.preventDefault();
 
             const notificationId = $(this).data('id');

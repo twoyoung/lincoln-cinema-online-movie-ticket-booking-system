@@ -25,7 +25,7 @@
                         Date & Time
                     </th>
                     <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                        Revenue
+                        Venue
                     </th>
                     <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                         Seats
@@ -47,16 +47,26 @@
                     <td class="py-4 px-6 border-b border-gray-200 items-center"><span class="block">{{ booking.screening.screeningDate.strftime('%d-%m-%Y') }}</span><span class="block">{{ booking.screening.startTime.strftime('%I:%M %p') }}</span></td>
                     <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.screening.hall.name }}</td>
                     <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.seats|map(attribute='seatNumber')|join(", ") }}</td>
-                    <td class="py-4 px-6 border-b border-gray-200 items-center">${{ booking.payment.discountedAmount }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">{%if booking.payment.discountedAmount%}${%else%}--{%endif%}{{ booking.payment.discountedAmount }}</td>
                     <td class="py-4 px-6 border-b border-gray-200 items-center">
-                        <div class="inline-flex items-center w-full">
+                        <div class="inline-flex items-center w-full justify-between">
                         {{ booking.status.name }}
-
+                        <div class="inline-flex">
                         {% if booking.status.name != 'CANCELLED' %}
-                        <form id="cancelForm" action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="ml-4">
-                            <button data-cancel-button class="text-white bg-red-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Cancel</button>
-                        </form>
+                            <form id="cancelForm" action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="ml-4">
+                                <button data-cancel-button class="text-white bg-red-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Cancel</button>
+                            </form>
+                            {% if booking.user.type == 'customer' and  booking.status.name == 'PENDING'%}
+                            <form id="payForm" action="{{ url_for('movies.paymentOnline', bookingId=booking.id) }}" method="get" class="ml-4">
+                                <button class="text-white bg-green-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Pay</button>
+                            </form>
+                            {% elif booking.user.type == 'staff' and  booking.status.name == 'PENDING' %}
+                            <form id="payForm" action="{{ url_for('movies.paymentOnsite', bookingId=booking.id) }}" method="get" class="ml-4">
+                                <button class="text-white bg-green-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Pay</button>
+                            </form>
+                            {% endif %}
                         {% endif %}
+                        </div>
                         </div>
                     </td>
                 </tr>

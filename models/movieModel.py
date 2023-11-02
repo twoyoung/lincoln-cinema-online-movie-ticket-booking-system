@@ -29,7 +29,10 @@ class ScreeningValidationMixin:
     def isFutureScreening(self) -> bool:
         today = datetime.now()
         now = datetime.now()
-        if self.screeningDate > today or (self.screeningDate == today and self.startTime > now):
+        print(self.screeningDate.date())
+        print(self.startTime.time())
+        print(self.screeningDate.date() > today.date() or (self.screeningDate.date() == today.date() and self.startTime.time() > now.time()))
+        if self.screeningDate.date() > today.date() or (self.screeningDate.date() == today.date() and self.startTime.time() > now.time()):
             return True
         return False
     
@@ -83,9 +86,12 @@ class Movie(db.Model, ScreeningValidationMixin):
         return False
     
     @staticmethod
-    def getMovieById(movieId: int) -> "Movie":
-        movie =  Movie.query.get(movieId)
+    def getMovieById(movieId: int) -> Union["Movie", None]:
+        return  Movie.query.get(movieId)
 
+    @staticmethod
+    def getActiveMovieById(movieId: int) -> Union["Movie", None]:
+        movie = Movie.query.get(movieId)
         if movie and movie.status == MovieStatus.ACTIVE:
             return movie
         else:
@@ -110,7 +116,7 @@ class Booking(db.Model):
     seats = relationship('CinemaHallSeat', backref='bookings')
 
     @staticmethod
-    def getBookingById(bookingId: int) -> "Booking":
+    def getBookingById(bookingId: int) -> Union["Booking", None]:
         return Booking.query.get(bookingId)
     
     @staticmethod
@@ -128,9 +134,9 @@ class Booking(db.Model):
 
             seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
             if action == "booked":
-                message = f"#{self.id} Booking confirmed!\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
+                message = f"#{self.id} Booking confirmed!\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}"
             elif action == 'canceled':
-                message = f"#{self.id} Booking cancelled successfully!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
+                message = f"#{self.id} Booking cancelled!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}"
             else:
                 raise ValueError("Invalid action for notification")
             
@@ -184,12 +190,16 @@ class Screening(db.Model, ScreeningValidationMixin, BookingListFilterMixin):
         return seatMatrix
     
     @staticmethod
-    def getScreeningById(screeningId: int) -> "Screening":
+    def getActiveScreeningById(screeningId: int) -> Union["Screening", None]:
         screening = Screening.query.get(screeningId)
         if screening and screening.isActiveScreening() and screening.isFutureScreening():
             return screening
         else:
             return None
+        
+    @staticmethod
+    def getScreeningById(screeningId: int) -> Union["Screening", None]:
+        return Screening.query.get(screeningId)
     
 # Define the Notification table (assuming from previous discussion)
 class Notification(db.Model):
