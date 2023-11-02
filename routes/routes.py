@@ -184,7 +184,7 @@ def cancelMovie(movieId=None):
     else:
         return MovieController.showCancelMoviePage()
 
-@movie_bp.route('/cancel/screening/<screeningId>', methods=['DELETE'])
+@movie_bp.route('/cancel/screening/<screeningId>', methods=['POST'])
 @admin_required
 def cancelScreening(screeningId):
     return MovieController.cancelScreening(session['userId'], screeningId)

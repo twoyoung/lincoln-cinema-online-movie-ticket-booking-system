@@ -21,6 +21,13 @@
 
                     <!-- Book Button -->
                     <a href="{{ url_for('movies.selectSeats', screeningId=screening.id) }}" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-150">Book</a>
+
+                    {% if userType == 'admin' %}
+                    <!-- <form method="post" action="{{ url_for('movies.cancelScreening', screeningId=screening.id) }}" class="inline-block"> -->
+                        <!-- <input type="hidden" name="_method" value="DELETE"> -->
+                        <button type="button" onclick="showModal({{ screening.id }})" data-screening-id="{{ screening.id }}" class="cancel-btn mt-2 inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-150">Cancel</button>
+                    <!-- </form> -->
+                    {% endif %}
                 </div>
             {% endfor %}
         {% else %}
@@ -28,6 +35,34 @@
         {% endif %}
     </div>
 
+    <div id="confirmationModal" class="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 hidden justify-center items-center">
+        <div class="bg-white p-6 rounded-lg">
+            <p>Are you sure you want to cancel this screening?</p>
+
+            <form id="modalForm" action="" method="post" class="mt-4">
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mr-2">
+                    Confirm
+                </button>
+                <button type="button" onclick="hideModal()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded">
+                    Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    var baseURL = "{{ url_for('movies.cancelScreening', screeningId='SCREENING_ID') }}";
+    function showModal(screeningId) {
+        document.getElementById('confirmationModal').style.display = 'flex';
+        var actionURL = baseURL.replace('SCREENING_ID', screeningId);
+        document.getElementById('modalForm').action = actionURL;
+    }
+
+    function hideModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+</script>
 
 {% endblock %}

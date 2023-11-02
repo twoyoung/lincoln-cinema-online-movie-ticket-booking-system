@@ -38,7 +38,7 @@ class MovieController:
             screeningList = movie.screenings
         else:
             screeningList = []
-        return render_template("movieScreenings.html", screeningList=screeningList)
+        return render_template("movieScreenings.html", screeningList=screeningList, userType=session['userType'])
         
     @staticmethod
     def viewSeatChart(screeningId: int):
@@ -294,7 +294,18 @@ class MovieController:
         user = User.getUserById(userId)
         if user.type == 'admin':
             screening = Screening.getScreeningById(screeningId)
-            return user.cancelScreening(screening)
+            result = user.cancelScreening(screening)
+            
+            if isinstance(result, tuple) and len(result) == 2 and result[1] == 401:  # If unauthorized
+                flash('Unauthorized to cancel the screening.', 'error')
+                return redirect(url_for('movies.screeningList'))
+
+            if result == "Screening and its bookings cancelled successfully.":
+                flash('Screening and its bookings cancelled successfully.', 'success')
+            else:
+                flash(result, 'error')
+            
+            return redirect(url_for('movies.showMovieScreenings', movieId=screening.movie.id))
         else:
             return "Unauthorized", 401
 
