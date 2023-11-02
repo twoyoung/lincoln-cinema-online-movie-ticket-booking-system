@@ -4,14 +4,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#1a202c',
-        secondary: '#2d3748',
+        primary: '#222831',
+        secondary: '#393E46',
+        tertiary: '#00ADB5',
+        background: '#EEEEEE',
+        highlight: '#FFD369'
       }
     }
   },
   plugins: [
     require('tailwindcss'),
-    require('autoprefixer')
+    require('autoprefixer'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography')
   ],
 }
 
