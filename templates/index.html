@@ -7,53 +7,59 @@
 <div class="container mx-auto p-6">
 
     <!-- Filter Section -->
-    <div class="bg-white p-4 rounded shadow-md mb-6">
-        <h2 class="text-xl font-bold mb-4">Filter Movies</h2>
-        <form action="/movies" method="get" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-10 opacity-90 backdrop-blur-md">
+        <h2 class="text-2xl font-bold mb-6 border-b pb-3 border-gray-200 text-gray-700">Filter Movies</h2>
+        <form action="/movies" method="get" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Title Filter -->
                 <div>
-                    <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
-                    <input type="text" name="title" id="title" placeholder="Title" class="mt-1 p-2 w-full border rounded">
+                    <label for="title" class="block text-sm font-medium text-gray-600">Title:</label>
+                    <input type="text" name="title" id="title" placeholder="Title" class="mt-2 p-2 w-full border rounded-md">
                 </div>
 
                 <!-- Language Filter -->
                 <div>
-                    <label for="language" class="block text-sm font-medium text-gray-700">Language:</label>
-                    <input type="text" name="language" id="language" placeholder="Language" class="mt-1 p-2 w-full border rounded">
+                    <label for="language" class="block text-sm font-medium text-gray-600">Language:</label>
+                    <input type="text" name="language" id="language" placeholder="Language" class="mt-2 p-2 w-full border rounded-md">
                 </div>
 
                 <!-- Genre Filter -->
                 <div>
-                    <label for="genre" class="block text-sm font-medium text-gray-700">Genre:</label>
-                    <input type="text" name="genre" id="genre" placeholder="Genre" class="mt-1 p-2 w-full border rounded">
+                    <label for="genre" class="block text-sm font-medium text-gray-600">Genre:</label>
+                    <input type="text" name="genre" id="genre" placeholder="Genre" class="mt-2 p-2 w-full border rounded-md">
                 </div>
 
                 <!-- Release Date Filter -->
                 <div>
-                    <label for="year" class="block text-sm font-medium text-gray-700">Year:</label>
-                    <input type="text" name="year" id="year" class="mt-1 p-2 w-full border rounded">
+                    <label for="year" class="block text-sm font-medium text-gray-600">Year:</label>
+                    <input type="text" name="year" id="year" placeholder="E.g. 2022" class="mt-2 p-2 w-full border rounded-md">
                 </div>
             </div>
             
             <!-- Search Button -->
-            <div class="text-right">
-                <button type="submit" class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Apply Filters</button>
+            <div class="text-right mt-4">
+                <button type="submit" class="p-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-150">Apply Filters</button>
             </div>
         </form>
     </div>
 
-
-    <!-- movie section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Movie Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% if allMovies|length > 0 %}
         {% for movie in allMovies %}
-        <a href="{{ url_for('movies.showMovieDetailsAndScreenings', movieId=movie.id) }}" class="block bg-white p-5 rounded shadow-md no-underline hover:no-underline">
-            <img src="/static/moviePosters/sample.jpg" alt="{{ movie.title }}" class="w-full h-56 object-cover rounded-md">
-            <h2 class="text-xl font-bold mt-4">{{ movie.title }}</h2>
-            <p class="text-gray-600">{{ movie.description }}</p>
+        <a href="{{ url_for('movies.showMovieDetailsAndScreenings', movieId=movie.id) }}" class="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-150 no-underline hover:no-underline opacity-90 backdrop-blur-md transform hover:scale-105">
+            <img src="/static/moviePosters/sample.jpg" alt="{{ movie.title }}" class="w-full h-64 object-cover rounded-lg mb-4">
+            <h2 class="text-xl font-semibold mb-3 text-gray-700">{{ movie.title }}</h2>
+            <p class="text-gray-600 line-clamp-3">{{ movie.description }}</p>
         </a>
         {% endfor %}
-    </div>
+    {% else %}
+        <div class="col-span-full text-center py-20 bg-white opacity-90 backdrop-blur-md rounded-lg shadow-md">
+            <h3 class="text-2xl font-bold text-gray-700 mb-4">No Movies Found</h3>
+            <p class="text-gray-600">Sorry, we couldn't find any movies matching your criteria. Please adjust your filters and try again.</p>
+        </div>
+    {% endif %}
 </div>
-
+</div>
+</body>
 {% endblock %}
