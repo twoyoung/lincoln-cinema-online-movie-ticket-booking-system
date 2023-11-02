@@ -5,64 +5,70 @@
 
 {% block content %}
 
-<div class="container mx-auto px-4">
-    <div class="bg-white p-5 rounded shadow-lg w-full md:w-1/2 mx-auto">
+<div class="container mx-auto px-4 px-4 py-10 max-w-lg">
+    <div class="bg-white p-8 rounded shadow-md border border-gray-200">
+        <div class="border-b-2 border-gray-200 pb-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-6">Booking Details</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <p><span class="font-medium font-bold">Booking ID:</span> {{ booking.id }}</p>
+                <p><span class="font-medium font-bold">User ID:</span> {{ booking.userId }}</p>
+                <p><span class="font-medium font-bold">Movie:</span> {{ booking.screening.movie.title }}</p>
+                <p><span class="font-medium font-bold">Date:</span> {{ booking.screening.screeningDate.strftime('%Y-%m-%d') }}</p>
+                <p><span class="font-medium font-bold">Start Time:</span> {{ booking.screening.startTime.strftime('%I:%M %p') }}</p>
+                <p><span class="font-medium font-bold">end Time:</span> {{ booking.screening.endTime.strftime('%I:%M %p') }}</p>
+                <p><span class="font-medium font-bold">Hall:</span> {{ booking.screening.hall.name }}</p>
+                <p><span class="font-medium font-bold">Seats:</span> 
+                    {% for seat in booking.seats %} 
+                        {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+
+                <p class="col-span-2 text-right font-bold text-xl" id="total-amount">Total: ${{ booking.orderTotal }}</p>
+            </div>
+        </div>
         <form action="{{ url_for('movies.paymentOnsite', bookingId=booking.id) }}" method="POST">
-
-            <!-- Booking Details Section -->
-             <!-- Booking Details Section -->
-            <h2 class="text-xl font-semibold mb-4">Booking Details</h2>
-            <p>Booking ID: {{ booking.id }}</p>
-            <p>User ID: {{ booking.userId }}</p>
-            <p>Seats: {% for seat in booking.seats %} {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}{% endfor %}
-            </p>
-            <p id="order-total">Total: ${{ booking.orderTotal }}</p>
-
-            <hr class="my-4">
         
             <!-- Payment Method Section -->
-            <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
-            <input type="hidden" name="bookingId" value="{{ booking.id }}">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Choose Payment Method:
-                </label>
-                <select name="paymentMethod" id="payment-method" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <option value="eftpos">EFTPOS</option>
-                    <option value="cash">Cash</option>
-                </select>
-            </div>
-        
-            <!-- Coupon Code (assuming you want this) -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Apply Coupon Code:
-                </label>
-                <input type="text" name="couponCode" id="coupon-code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter coupon code">
-                <button id="apply-coupon" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Apply Coupon
-                </button>
-                <p id="discount-message" class="text-green-500 mt-2"></p>
+            <div class="space-y-4 mb-4">
+                <div class="w-full">
+                    <label class="block mb-2 font-bold">Payment Method</label>
+                    <select name="paymentMethod" id="payment-method" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="eftpos">EFTPOS</option>
+                        <option value="cash">Cash</option>
+                    </select>
+                </div>
             </div>
         
             <!-- Cash Payment Section (initially hidden) -->
             <div id="cash-section" class="hidden">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                    <label class="block mb-2 font-bold">
                         Amount Paid:
                     </label>
-                    <input type="text" name="receivedCash" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter amount paid by customer">
+                    <input type="text" name="receivedCash" class="border rounded w-full p-2" placeholder="Enter amount paid by customer">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                    <label class="block mb-2 font-bold">
                         Change Due:
                     </label>
-                    <input id="change-due" name="change" class="p-2 border rounded" />
+                    <input id="change-due" name="change" class="border rounded w-full p-2" />
                 </div>
             </div>
+
+            <!-- Coupon Code (assuming you want this) -->
+            <div class="mb-4 mb-6">
+                <label class="block mb-2 font-bold">Coupon code:</label>
+                <div class="flex justify-between items-center">
+                    <input type="text" name="couponCode" id="coupon-code" class="border rounded flex-grow p-2 mr-4" placeholder="Enter coupon code">
+                    <button id="apply-coupon" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Apply Coupon
+                    </button>
+                </div>
+                <p id="discount-message" class="text-green-500 mt-2"></p>
+            </div>
         
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded mt-4 shadow-lg hover:shadow-xl transition-all">
                 Process Payment
             </button>
         
@@ -88,7 +94,7 @@
         });
 
         document.querySelector("#cash-section input").addEventListener("input", function () {
-            const originalTotalElement = document.getElementById("order-total");
+            const originalTotalElement = document.getElementById("total-amount");
             let total;
 
             if (originalTotalElement.classList.contains("line-through")) {
@@ -103,7 +109,7 @@
             document.getElementById("change-due").value = changeDue;
         });
 
-        // coupon code validation
+        // New coupon code validation
         document.getElementById("apply-coupon").addEventListener("click", function (e) {
             e.preventDefault();
             
@@ -121,16 +127,20 @@
             .then(response => response.json())
             .then(data => {
                 if (data.valid) {
-                    const originalTotalElement = document.getElementById("order-total");
+                    const originalTotalElement = document.getElementById("total-amount");
+
                     const originalTotal = parseFloat(originalTotalElement.textContent.split('$')[1]);
                     const newTotal = originalTotal * (1 - data.discount);
 
-                    originalTotalElement.textContent = "Original Total: $"+ originalTotal;
+                    originalTotalElement.textContent = "Original Total: $" + originalTotal;
                     originalTotalElement.classList.add("line-through", "opacity-60");
                     
                     const newTotalElement = document.createElement('p');
+                    newTotalElement.classList.add("col-span-2", "text-right", "font-bold", "text-xl");
+
+
                     newTotalElement.textContent = "Discounted Total: $" + newTotal.toFixed(2);
-                    newTotalElement.classList.add("font-bold", "text-green-500"); // For emphasis using TailwindCSS
+                    newTotalElement.classList.add("font-bold", "text-green-500", "text-right"); // Added the text-right class
                     originalTotalElement.insertAdjacentElement('afterend', newTotalElement);
 
                     document.getElementById("discount-message").textContent = "Discount applied!";

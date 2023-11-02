@@ -30,8 +30,10 @@ def customer_required(f):
         return f(*args, **kwargs)
     return wrapper
 
+
 movie_bp = Blueprint('movies', __name__)
 auth_bp = Blueprint('auth', __name__)
+
 
 @movie_bp.route('/', methods=['GET'])
 def home():
@@ -58,9 +60,6 @@ def showMovies():
 def showMovieDetailsAndScreenings(movieId):
     return MovieController.viewMovieDetailsAndScreenings(movieId)
 
-# @movie_bp.route('/movies/<movieId>/screenings', methods=['GET', 'POST'])
-# def showMovieScreenings(movieId):
-#     return MovieController.viewMovieScreenings(movieId)
 
 @movie_bp.route('/book/<screeningId>/seats', methods=['GET', 'POST'])
 @login_required

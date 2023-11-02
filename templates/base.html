@@ -32,7 +32,7 @@
                         <!-- Notification icon with potential red dot for unread notifications -->
                         <div class="relative inline-block mr-3" id="notification-icon">
                             <i class="fas fa-envelope text-xl cursor-pointer px-2"></i>
-                            <div id="notification-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded shadow-md hidden">
+                            <div id="notification-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded shadow-md hidden z-50">
                                 <ul class="py-2 text-black" id="notification-list"></ul>
                             </div>
                             {% if has_unread_notifications %}
@@ -60,10 +60,6 @@
 </nav>
 
 
-
-
-
-<!-- Flashed Messages -->
 <!-- Flashed Messages -->
 {% if not hide_flash_messages %}
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -104,69 +100,74 @@
 
 
   <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         let userType = "{{ session['userType'] }}";
-        // Check for unread notifications only if we're a customer
-        $(document).ready(function() {
-        // Check for unread notifications only if userType is a customer
-        if (userType === 'customer') {
-            $.getJSON("/api/get-notifications", function(data) {
-                if (data.numberOfUnreadNotifications > 0) {
-                    $("#notification-icon").append('<span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>');
-                }
-                let notificationList = $("#notification-list");
-                notificationList.empty();  // Clear previous notifications
 
-                if(data.notifications.length === 0) {
-                    // No notifications
+        function fetchNotifications() {
+            $.getJSON("/api/get-notifications", function (data) {
+                let notificationList = $("#notification-list");
+                notificationList.empty();
+
+                if (data.numberOfUnreadNotifications > 0) {
+                    $("#notification-icon").find('.unread-dot').remove();
+                    $("#notification-icon").append('<span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white unread-dot"></span>');
+                } else {
+                    $("#notification-icon").find('.unread-dot').remove();
+                }
+
+                if (data.notifications.length === 0) {
                     notificationList.append('<li class="px-4 py-2 text-center text-gray-500">No new notifications</li>');
                 } else {
-                    data.notifications.forEach(function(notification) {
+                    data.notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                    data.notifications.forEach(function (notification) {
                         let notificationItem = `
-                        <li class="px-4 py-2 hover:bg-gray-200 notification-item" data-id="${notification.id}">
-                            <a href="${notification.url}">
-                                ${notification.message}
-                            </a>
-                        </li>`;
+                <li class="px-4 py-2 hover:bg-gray-200 notification-item ${!notification.isRead ? 'bg-gray-100' : ''}" data-id="${notification.id}" data-expanded="false">
+                    <a href="${notification.url}">
+                        <span class="line-clamp-1">${notification.message}</span>
+                    </a>
+                </li>`;
                         notificationList.append(notificationItem);
                     });
-                    console.log(notificationList);
                 }
             });
         }
-        });
-    });
 
-    $(document).ready(function() {
-        // Toggle dropdown visibility
-        $("#notification-icon .fa-envelope").click(function() {
+        fetchNotifications();
+
+        $("#notification-icon .fa-envelope").click(function () {
             $("#notification-dropdown").toggle();
         });
 
-        // Close dropdown if clicked outside
-        $(document).on("click", function(event) {
+        $(document).on("click", function (event) {
             if (!$(event.target).closest("#notification-icon").length) {
                 $("#notification-dropdown").hide();
             }
         });
 
-        // ... your existing code to check for unread notifications
-    });
+        $(document).on('click', '.notification-item', function () {
+            event.preventDefault();
 
+            const notificationId = $(this).data('id');
+            const isExpanded = $(this).data('expanded');
 
-    // Assuming each notification has a data-id attribute containing its ID
-    $(document).on('click', '.notification-item', function() {
-        event.preventDefault();
-        const notificationId = $(this).data('id');
-
-        // Make an AJAX call to mark the notification as read in the backend
-        $.post('/api/mark-notification-read', { id: notificationId }, function(response) {
-            if(response.success) {
-                // Provide feedback, like removing a highlight or the red dot indicator
+            if (isExpanded) {
+                $(this).find('span').removeClass('line-clamp-none').addClass('line-clamp-1');
+                $(this).data('expanded', false);
+            } else {
+                $(this).find('span').removeClass('line-clamp-1').addClass('line-clamp-none');
+                $(this).data('expanded', true);
             }
+
+            $.post('/api/mark-notification-read', { id: notificationId }, function (response) {
+                if (response.success) {
+                    fetchNotifications();
+                }
+            });
         });
     });
-    </script>
+
+</script>
     
 
 </body>

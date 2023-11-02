@@ -16,10 +16,16 @@
                         Booking ID
                     </th>
                     <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Created at
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                         Movie
                     </th>
                     <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                         Date & Time
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Revenue
                     </th>
                     <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                         Seats
@@ -34,17 +40,24 @@
             </thead>
             <tbody class="text-gray-700">
                 {% for booking in bookingList %}
-                <tr class="hover:bg-gray-100">
-                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.id }}</td>
-                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.screening.movie.title }}</td>
-                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.screening.screeningDate }} {{ booking.screening.startTime }}</td>
-                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.seats|map(attribute='seatNumber')|join(", ") }}</td>
-                    <td class="py-4 px-6 border-b border-gray-200">${{ booking.payment.discountedAmount }}</td>
-                    <td class="py-4 px-6 border-b border-gray-200 flex items-center">
-                        {{ booking.status }}
-                        <form action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="ml-4">
-                            <button type="submit" class="text-white bg-red-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Cancel</button>
+                <tr class="hover:bg-gray-100" data-screening-date="{{ booking.screening.startTime.strftime('%Y-%m-%d') }}">
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.id }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.createdOn.strftime('%d-%m-%Y %I:%M:%S') }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.screening.movie.title }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center"><span class="block">{{ booking.screening.screeningDate.strftime('%d-%m-%Y') }}</span><span class="block">{{ booking.screening.startTime.strftime('%I:%M %p') }}</span></td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.screening.hall.name }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">{{ booking.seats|map(attribute='seatNumber')|join(", ") }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">${{ booking.payment.discountedAmount }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 items-center">
+                        <div class="inline-flex items-center w-full">
+                        {{ booking.status.name }}
+
+                        {% if booking.status.name != 'CANCELLED' %}
+                        <form id="cancelForm" action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="ml-4">
+                            <button data-cancel-button class="text-white bg-red-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Cancel</button>
                         </form>
+                        {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -52,5 +65,53 @@
         </table>
     </div>
 </div>
+
+<div id="cancelModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-4 rounded-md">
+        <p>Are you sure you want to cancel this booking?</p>
+        <div class="flex justify-end mt-4">
+            <button id="closeModal" class="px-4 py-2 bg-gray-400 rounded-md mr-2">No</button>
+            <button id="confirmCancel" class="px-4 py-2 bg-red-600 text-white rounded-md">Yes, Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const cancelButtons = document.querySelectorAll("[data-cancel-button]");
+        const currentDate = new Date();
+        const cancelModal = document.getElementById("cancelModal");
+        const closeModal = document.getElementById("closeModal");
+        const confirmCancel = document.getElementById("confirmCancel");
+        let currentBookingId = null;
+
+        cancelButtons.forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+
+                // Retrieve the booking ID from the button's dataset
+                currentBookingId = button.dataset.bookingId;
+
+                cancelModal.style.display = "flex";
+            });
+        });
+
+        closeModal.addEventListener("click", function() {
+            cancelModal.style.display = "none";
+        });
+
+        confirmCancel.addEventListener("click", function() {
+            document.querySelector('#cancelForm').submit();
+        });
+    });
+</script>
+
+    
+    
+    
+    
+    
+    
+    
 
 {% endblock %}

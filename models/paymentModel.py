@@ -49,7 +49,7 @@ class Payment(db.Model):
     
     @staticmethod
     def createPayment(payment: "Payment") -> "Payment":
-        payment.discountedAmount = payment.calcFinalPayment()
+        payment.discountedAmount = round(payment.calcFinalPayment(), 2)
         db.session.add(payment)
 
         payment.booking.status = BookingStatus.CONFIRMED

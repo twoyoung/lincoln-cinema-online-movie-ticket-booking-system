@@ -1,9 +1,10 @@
 from datetime import datetime, date
 from sqlalchemy.orm import relationship, backref
 from app import db
-from typing import List
+from typing import List, Union
 from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import DateTime, desc
 
 class MovieStatus(Enum):
     ACTIVE = "ACTIVE"
@@ -113,19 +114,23 @@ class Booking(db.Model):
         return Booking.query.get(bookingId)
     
     @staticmethod
-    def getBookingList() -> List["Booking"]:
+    def getAllBookings() -> List["Booking"]:
+        return Booking.query.order_by(desc(Booking.createdOn)).all()
+
+    @staticmethod
+    def getFilteredBookingList() -> List["Booking"]:
         return Booking.query.filter(Booking.status != BookingStatus.CANCELLED).all()
         
-    def sendNotification(self, action: str = "booked") -> "Notification":
+    def sendNotification(self, action: str = "booked") -> Union["Notification", None]:
         from models import User
         user = User.getUserById(self.userId)
         if user.type == 'customer':
 
             seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
             if action == "booked":
-                message = f"Booking confirmed!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
+                message = f"#{self.id} Booking confirmed!\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
             elif action == 'canceled':
-                message = f"Booking cancelled successfully!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
+                message = f"#{self.id} Booking cancelled successfully!\nBooking ID: {self.id}\nMovie: {self.screening.movie.title}\nDate & Time: {self.screening.screeningDate.strftime('%d-%m-%Y')}, {self.screening.startTime.strftime('%I:%M %p')}\nVenue: { self.screening.hall.name }\nSeat(s): {seatNumbers}\nTotal Amount Paid: ${self.payment.discountedAmount}"
             else:
                 raise ValueError("Invalid action for notification")
             
@@ -137,6 +142,8 @@ class Booking(db.Model):
             user.notifications.append(notification)
             db.session.add(notification)
             db.session.commit()
+
+            return notification
 
 
 
@@ -192,6 +199,7 @@ class Notification(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey('users.id'))
     message = db.Column(db.String, nullable=False)
     isRead = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(DateTime, default=datetime.utcnow)
 
     @staticmethod
     def numberOfUnreadNotifications():

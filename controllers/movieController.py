@@ -1,5 +1,5 @@
 from flask import jsonify, redirect, render_template, url_for, flash, get_flashed_messages, session
-from sqlalchemy import Float
+from sqlalchemy import desc
 from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification
 from typing import List
 from datetime import datetime
@@ -35,15 +35,6 @@ class MovieController:
         else:
             flash("Movie does not exist.", 'error')
             return redirect(url_for('movies.showMovies'))
-    
-    # @staticmethod
-    # def viewMovieScreenings(movieId: int):
-    #     movie = Movie.getMovieById(movieId)
-    #     if movie:
-    #         screeningList = movie.screenings
-    #     else:
-    #         screeningList = []
-    #     return render_template("movieScreenings.html", screeningList=screeningList, userType=session['userType'])
         
     @staticmethod
     def viewSeatChart(screeningId: int):
@@ -57,7 +48,6 @@ class MovieController:
     @staticmethod
     def showPaymentPageOnline(bookingId: int):
         booking = Booking.getBookingById(bookingId)
-        print(booking)
         return render_template("paymentOnline.html", booking=booking)
     
     @staticmethod
@@ -83,16 +73,16 @@ class MovieController:
             booking.screening = screening
             booking.numberOfSeats = len(selectedSeats)
             booking.createdOn = datetime.now()
-            booking.orderTotal = sum(seat.seatPrice for seat in selectedSeats)
+            booking.orderTotal = round(sum(seat.seatPrice for seat in selectedSeats),2)
             booking.seats = selectedSeats
 
             if user.type == 'customer':
                 user.makeBooking(booking)
-                print(booking.id)
+                # print(booking.id)
                 return redirect(url_for('movies.paymentOnline', bookingId = booking.id))
             elif user.type == 'staff':
                 user.makeBooking(booking)
-                print(booking.id)
+                # print(booking.id)
                 return redirect(url_for('movies.paymentOnsite', bookingId = booking.id))
             
         elif paymentData:
@@ -175,7 +165,7 @@ class MovieController:
     def getNotifications(userId: int):
         user = User.getUserById(userId)
         if user and user.type == 'customer':
-            notificationList = Notification.query.filter_by(userId = userId).all()
+            notificationList = Notification.query.filter_by(userId=userId).order_by(desc(Notification.timestamp)).all()
             numberOfUnreadNotifications = Notification.numberOfUnreadNotifications()
             # Convert the list of notifications into a list of dictionaries
             notifications = [
@@ -201,9 +191,10 @@ class MovieController:
     def viewBookings(userId: int):
         user = User.getUserById(userId)
         if user.type == "customer":
+            # notificationList = Notification.query.filter_by(userId=userId).order_by(desc(Notification.timestamp)).all()
             bookingList = user.getBookingList()
         if user.type == "staff":
-            bookingList = Booking.getBookingList()
+            bookingList = Booking.getAllBookings()
         return render_template('bookings.html', bookingList=bookingList)
             
     @staticmethod
@@ -211,11 +202,16 @@ class MovieController:
         booking = Booking.getBookingById(bookingId)
         user = User.getUserById(userId)
         if user.type == 'customer' or user.type == 'staff':
-            success = user.cancelBooking(booking)
+            success, message = user.cancelBooking(booking)
             if success:
-                return "cancelled successfully"
+                flash(message, 'success')
             else:
-                return "cancel failed"
+                flash(message, 'error')
+            return redirect(url_for('movies.viewBookings'))
+        else:
+            flash("Unauthorized access", 'error')
+            return redirect(url_for('movies.viewBookings'))
+
 
     @staticmethod
     def showAddMoviePage():
@@ -259,11 +255,11 @@ class MovieController:
                 hallId = newScreeningData['hallId'],
                 movieId = newScreeningData['movieId']
             )
-            print(newScreeningData)
+            # print(newScreeningData)
             success =  user.addScreening(newScreening)
             if success:
                 flash("New Screening added successfully")
-                return redirect(url_for('movies.showMovieScreenings', movieId = newScreeningData['movieId']))
+                return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newScreeningData['movieId']))
             else:
                 flash("The Screening was not added successfully")
                 return redirect(url_for('movies.addScreening', movieId = newScreeningData['movieId']))

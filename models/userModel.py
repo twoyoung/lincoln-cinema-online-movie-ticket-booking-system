@@ -7,7 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
 from datetime import datetime
 from flask import session
-from sqlalchemy import extract
+from sqlalchemy import extract, desc
 
 class General:
     @classmethod
@@ -135,14 +135,17 @@ class BookingMixin:
         return False
 
     @staticmethod
-    def cancelBooking(booking: Booking) -> bool:
-        existingBooking = Booking.query.get(booking.id)
-        if existingBooking.status == BookingStatus.CANCELLED:
-            return False
-        elif existingBooking and existingBooking.status == BookingStatus.PENDING:
+    def cancelBooking(booking: Booking) -> Tuple[bool, str]:
+        existingBooking = Booking.getBookingById(booking.id)
+        if not existingBooking:
+            return False, "Booking does not exist."
+        elif existingBooking.status == BookingStatus.CANCELLED:
+            return False, "Booking already cancelled."
+        elif existingBooking.status == BookingStatus.PENDING:
             existingBooking.status = BookingStatus.CANCELLED
             db.session.commit()
-        elif existingBooking and existingBooking.status == BookingStatus.CONFIRMED:
+            return True, "Booking cancelled successfully."
+        elif existingBooking.status == BookingStatus.CONFIRMED:
             existingBooking.status = BookingStatus.CANCELLED
 
             refundAmount = existingBooking.payment.discountedAmount
@@ -150,9 +153,9 @@ class BookingMixin:
             from models import Refund
             Refund.createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
             db.session.commit()
-            return True
+            return True, "Booking canccelled successfully and refund has been processed."
         else:
-            return False
+            return False, "Unvalid booking status."
 
 
 class Admin(User):
@@ -167,7 +170,7 @@ class Admin(User):
 
     def addMovie(self, newMovie: Movie) -> bool:
         existingMovie = Movie.query.filter(Movie.title == newMovie.title, Movie.releaseDate == newMovie.releaseDate).first()
-        print(existingMovie)
+        # print(existingMovie)
 
         if not existingMovie:
             db.session.add(newMovie)
@@ -205,7 +208,7 @@ class Admin(User):
             currentTime = datetime.now()
             for screening in movie.screenings:
                 # print("currentDate:" )
-                # print(type(currentDate))
+                # (type(currentDate))
                 # print("screeningDate:")
                 # print(type(screening.screeningDate))
                 # print("screening.startTime:")
@@ -267,11 +270,11 @@ class Customer(User, BookingMixin):
             db.session.commit()
         return success
     
-    def cancelBooking(self, booking: Booking) -> bool:
-        success = super().cancelBooking(booking)
+    def cancelBooking(self, booking: Booking) -> Tuple[bool, str]:
+        success, message = super().cancelBooking(booking)
         if success:
             booking.sendNotification(action="canceled")
-        return success
+        return success, message
     
     def getBookingList(self) -> List[Booking]:
-        return self.bookings
+        return Booking.query.filter_by(userId=self.id).order_by(desc(Booking.createdOn)).all()
