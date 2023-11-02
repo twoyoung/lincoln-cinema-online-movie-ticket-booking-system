@@ -55,7 +55,12 @@ class Movie(db.Model):
     
     @staticmethod
     def getMovieById(movieId: int) -> "Movie":
-        return Movie.query.get(movieId)
+        movie =  Movie.query.get(movieId)
+
+        if movie and movie.status == MovieStatus.ACTIVE:
+            return movie
+        else:
+            return None
 
 # Define the Booking table
 class Booking(db.Model):
@@ -155,9 +160,10 @@ class Screening(db.Model):
     
     @staticmethod
     def getScreeningById(screeningId: int) -> "Screening":
-        try:
-            return Screening.query.get(screeningId)
-        except NoResultFound:
+        screening = Screening.query.get(screeningId)
+        if screening and screening.status == ScreeningStatus.ACTIVE:
+            return screening
+        else:
             return None
     
 # Define the Notification table (assuming from previous discussion)

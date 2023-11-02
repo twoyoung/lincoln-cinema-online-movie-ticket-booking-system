@@ -31,7 +31,7 @@
 
                         <!-- Notification icon with potential red dot for unread notifications -->
                         <div class="relative inline-block mr-3" id="notification-icon">
-                            <i class="fas fa-bell text-xl cursor-pointer"></i>
+                            <i class="fas fa-envelope text-xl cursor-pointer px-2"></i>
                             <div id="notification-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded shadow-md hidden">
                                 <ul class="py-2 text-black" id="notification-list"></ul>
                             </div>
@@ -48,7 +48,7 @@
                         <a href="{{ url_for('movies.cancelMovie') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">Cancel a movie</a>
                     {% endif %}
                     
-                    <i class="fas fa-user text-xl"></i>
+                    <!-- <i class="fas fa-user text-xl"></i> -->
                     <a href="{{ url_for('auth.logout') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">Logout</a>
                 {% else %}
                     <a href="{{ url_for('auth.login') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">Login</a>
@@ -64,27 +64,40 @@
 
 
 <!-- Flashed Messages -->
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="container mx-auto mt-4">
-      {% for message in messages %}
-        <div class="bg-blue-100 border-t-4 border-blue-500 rounded-b text-blue-900 px-4 py-3 shadow-md" role="alert">
-          <div class="flex">
-            <div class="py-1">
-              <svg class="fill-current h-6 w-6 text-blue-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/>
-              </svg>
-            </div>
-            <div>
-              <p class="font-bold">{{ message }}</p>
-            </div>
-          </div>
+<!-- Flashed Messages -->
+{% if not hide_flash_messages %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mx-auto mt-4">
+        {% for category, message in messages %}
+            {% if category == 'success' %}
+                <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md" role="alert">
+            {% elif category == 'error' %}
+                <div class="bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md" role="alert">
+            {% else %}
+                <!-- Default style for other types of messages -->
+                <div class="bg-blue-100 border-t-4 border-blue-500 rounded-b text-blue-900 px-4 py-3 shadow-md" role="alert">
+            {% endif %}
+                <div class="flex">
+                    <div class="py-1">
+                        <svg class="fill-current h-6 w-6 mr-4" 
+                             xmlns="http://www.w3.org/2000/svg" 
+                             viewBox="0 0 20 20">
+                             <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-bold">{{ message }}</p>
+                    </div>
+                </div>
+                </div>
+        {% endfor %}
         </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
+    {% endif %}
+    {% endwith %}
+{% endif %}
+
+
 
 
   {% block content %}{% endblock %}
@@ -126,7 +139,7 @@
 
     $(document).ready(function() {
         // Toggle dropdown visibility
-        $("#notification-icon .fa-bell").click(function() {
+        $("#notification-icon .fa-envelope").click(function() {
             $("#notification-dropdown").toggle();
         });
 

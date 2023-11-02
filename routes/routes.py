@@ -55,12 +55,12 @@ def showMovies():
         return MovieController.browseMovies()
     
 @movie_bp.route('/movies/<movieId>', methods=['GET', 'POST'])
-def showMovieDetails(movieId):
-    return MovieController.viewMovieDetails(movieId)
+def showMovieDetailsAndScreenings(movieId):
+    return MovieController.viewMovieDetailsAndScreenings(movieId)
 
-@movie_bp.route('/movies/<movieId>/screenings', methods=['GET', 'POST'])
-def showMovieScreenings(movieId):
-    return MovieController.viewMovieScreenings(movieId)
+# @movie_bp.route('/movies/<movieId>/screenings', methods=['GET', 'POST'])
+# def showMovieScreenings(movieId):
+#     return MovieController.viewMovieScreenings(movieId)
 
 @movie_bp.route('/book/<screeningId>/seats', methods=['GET', 'POST'])
 @login_required

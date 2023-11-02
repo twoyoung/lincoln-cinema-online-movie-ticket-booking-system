@@ -24,21 +24,26 @@ class MovieController:
         return render_template("index.html", allMovies=filteredMovies)
 
     @staticmethod
-    def viewMovieDetails(movieId: int):
-        movie = Movie.getMovieById(movieId)
-        if movie:
-            return render_template("movie_details.html", movie=movie, userType=session['userType'])
-        else:
-            return "Movie not found", 404
-    
-    @staticmethod
-    def viewMovieScreenings(movieId: int):
+    def viewMovieDetailsAndScreenings(movieId: int):
         movie = Movie.getMovieById(movieId)
         if movie:
             screeningList = movie.screenings
+
+            # Check if 'userType' exists in session. If not, default to 'guest'
+            userType = session.get('userType', 'guest')
+            return render_template("movieDetailsAndScreenings.html", screeningList=screeningList, movie=movie, userType=userType)
         else:
-            screeningList = []
-        return render_template("movieScreenings.html", screeningList=screeningList, userType=session['userType'])
+            flash("Movie does not exist.", 'error')
+            return redirect(url_for('movies.showMovies'))
+    
+    # @staticmethod
+    # def viewMovieScreenings(movieId: int):
+    #     movie = Movie.getMovieById(movieId)
+    #     if movie:
+    #         screeningList = movie.screenings
+    #     else:
+    #         screeningList = []
+    #     return render_template("movieScreenings.html", screeningList=screeningList, userType=session['userType'])
         
     @staticmethod
     def viewSeatChart(screeningId: int):
@@ -232,7 +237,7 @@ class MovieController:
             success = user.addMovie(newMovie)
             if success:
                 flash("The movie was added successfully")
-                return redirect(url_for('movies.showMovieDetails', movieId = newMovie.id))
+                return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newMovie.id))
             else:
                 flash("The movie was not added successfully")
                 return redirect(url_for('movies.addMovie'))

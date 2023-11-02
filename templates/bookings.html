@@ -4,51 +4,53 @@
 
 {% block content %}
 
-<h2 class="text-xl font-bold mb-4">Your Bookings</h2>
+<div class="container mx-auto px-4 pt-16">
 
-<table class="min-w-full bg-white">
-    <thead>
-        <tr>
-            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
-                Booking ID
-            </th>
-            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
-                Movie
-            </th>
-            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
-                Date & Time
-            </th>
-            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
-                Seats
-            </th>
-            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
-                Total Amount
-            </th>
-            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold uppercase tracking-wider">
-                Status
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for booking in bookingList %}
-        <tr>
-            <td class="py-2 px-4 border-b border-gray-200">{{ booking.id }}</td>
-            <td class="py-2 px-4 border-b border-gray-200">{{ booking.screening.movie.title }}</td>
-            <td class="py-2 px-4 border-b border-gray-200">{{ booking.screening.screeningDate }} {{ booking.screening.startTime }}</td>
-            <td class="py-2 px-4 border-b border-gray-200">{{ booking.seats|map(attribute='seatNumber')|join(", ") }}</td>
-            <td class="py-2 px-4 border-b border-gray-200">${{ booking.payment.discountedAmount }}</td>
-            <td class="py-2 px-4 border-b border-gray-200">
-                {{ booking.status }}
-                <form action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="inline">
-                    <button type="submit" class="ml-2 py-1 px-2 bg-red-500 text-white text-xs rounded">Cancel</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h2 class="text-4xl font-bold mb-8 text-center">Your Bookings</h2>
 
-
-   
+    <div class="shadow overflow-hidden rounded border-b border-gray-200">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Booking ID
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Movie
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Date & Time
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Seats
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Total Amount
+                    </th>
+                    <th class="w-1/6 py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        Status
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                {% for booking in bookingList %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.id }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.screening.movie.title }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.screening.screeningDate }} {{ booking.screening.startTime }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200">{{ booking.seats|map(attribute='seatNumber')|join(", ") }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200">${{ booking.payment.discountedAmount }}</td>
+                    <td class="py-4 px-6 border-b border-gray-200 flex items-center">
+                        {{ booking.status }}
+                        <form action="{{ url_for('movies.cancelBooking', bookingId=booking.id) }}" method="post" class="ml-4">
+                            <button type="submit" class="text-white bg-red-500 hover:bg-red-600 py-1 px-3 text-xs rounded-full">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}

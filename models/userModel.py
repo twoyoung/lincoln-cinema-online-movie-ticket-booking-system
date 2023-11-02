@@ -13,35 +13,35 @@ class General:
     @classmethod
     def getAllMovies(cls) -> List[Movie]:
         try:
-            return Movie.query.all()
+            return Movie.query.filter(Movie.status == 'ACTIVE').all()
         except NoResultFound:
             return []
 
     @classmethod
     def searchMovieTitle(cls, title: str) -> List[Movie]:
         try:
-            return Movie.query.filter(Movie.title == title).all()
+            return Movie.query.filter(Movie.title == title, Movie.status == 'ACTIVE').all()
         except NoResultFound:
             return []
 
     @classmethod
     def searchMovieLang(cls, lang: str) -> List[Movie]:
         try:
-            return Movie.query.filter(Movie.language == lang).all()
+            return Movie.query.filter(Movie.language == lang, Movie.status == 'ACTIVE').all()
         except NoResultFound:
             return []
 
     @classmethod
     def searchMovieGenre(cls, genre: str) -> List[Movie]:
         try:
-            return Movie.query.filter(Movie.genre == genre).all()
+            return Movie.query.filter(Movie.genre == genre, Movie.status == 'ACTIVE').all()
         except NoResultFound:
             return []
 
     @classmethod
     def searchMovieYear(cls, rYear: int) -> List[Movie]:
         try:
-            return Movie.query.filter(extract('year', Movie.releaseDate) == rYear).all()
+            return Movie.query.filter(extract('year', Movie.releaseDate) == rYear, Movie.status == 'ACTIVE').all()
         except NoResultFound:
             return []
 
