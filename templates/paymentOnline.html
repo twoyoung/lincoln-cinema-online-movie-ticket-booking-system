@@ -1,72 +1,92 @@
-
 {% extends 'base.html' %}
 
 {% block title %}Lincoln Cinema{% endblock %}
 
 {% block content %}
 
-<div class="container mx-auto px-4">
-    <h1 class="text-2xl font-bold mb-5">Online Payment</h1>
-    <div class="bg-white p-5 rounded shadow-md">
+<div class="container mx-auto px-4 py-10 max-w-lg">
+    <h1 class="text-3xl font-bold mb-8 text-center">Online Payment</h1>
+    
+    <div class="bg-white p-8 rounded shadow-md border border-gray-200">
 
-        <h2 class="text-xl font-semibold mb-4">Booking Details</h2>
-        <p>Booking ID: {{ booking.id }}</p>
-        <p>User ID: {{ booking.userId }}</p>
-        <p>Seats: {% for seat in booking.seats %} {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}{% endfor %}</p>
-        <p id="total-amount">Total: ${{ booking.orderTotal }}</p>
+        <div class="border-b-2 border-gray-200 pb-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-6">Booking Details</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <p><span class="font-medium font-bold">Booking ID:</span> {{ booking.id }}</p>
+                <p><span class="font-medium font-bold">User ID:</span> {{ booking.userId }}</p>
+                <p><span class="font-medium font-bold">Movie:</span> {{ booking.screening.movie.title }}</p>
+                <p><span class="font-medium font-bold">Date:</span> {{ booking.screening.screeningDate.strftime('%Y-%m-%d') }}</p>
+                <p><span class="font-medium font-bold">Start Time:</span> {{ booking.screening.startTime.strftime('%I:%M %p') }}</p>
+                <p><span class="font-medium font-bold">end Time:</span> {{ booking.screening.endTime.strftime('%I:%M %p') }}</p>
+                <p><span class="font-medium font-bold">Hall:</span> {{ booking.screening.hall.name }}</p>
+                <p><span class="font-medium font-bold">Seats:</span> 
+                    {% for seat in booking.seats %} 
+                        {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
 
-        <form action="{{ url_for('movies.paymentOnline', bookingId=booking.id) }}" method="POST" class="mt-5">
-            <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
-            
-            <select id="paymentMethod" name="paymentMethod" class="mb-4 border rounded p-2 w-full">
-                <option value="creditcard">Credit Card</option>
-                <option value="debitcard">Debit Card</option>
-            </select>
+                <p class="col-span-2 text-right font-bold text-xl" id="total-amount">Total: ${{ booking.orderTotal }}</p>
+            </div>
+        </div>
+
+        <form action="{{ url_for('movies.paymentOnline', bookingId=booking.id) }}" method="POST">
+
+            <div class="space-y-4">
+                <div class="w-full">
+                    <label class="block mb-2 font-bold">Payment Method</label>
+                    <select id="paymentMethod" name="paymentMethod" class="w-1/2 border rounded p-2">
+                    <option value="creditcard">Credit Card</option>
+                    <option value="debitcard">Debit Card</option>
+                </select>
+            </div>
 
             <div id="creditCardFields">
                 <div class="mb-4">
-                    <label class="block mb-2">Card Number:</label>
+                    <label class="block mb-2 font-bold">Card Number:</label>
                     <input type="text" name="creditCardNumber" value="1234567890" class="border rounded w-full p-2">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-2">Name on Card:</label>
+                    <label class="block mb-2 font-bold">Name on Card:</label>
                     <input type="text" name="nameOnCard" value="Customer" class="border rounded w-full p-2">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-2">Expiry Date:</label>
+                    <label class="block mb-2 font-bold">Expiry Date:</label>
                     <input type="text" name="expiryDate" value="03/27" placeholder="MM/YY" class="border rounded w-full p-2">
                 </div>
             </div>
 
             <div id="debitCardFields" style="display: none;">
                 <div class="mb-4">
-                    <label class="block mb-2">Card Number:</label>
+                    <label class="block mb-2 font-bold">Card Number:</label>
                     <input type="text" name="debitCardNumber" value="1234567890" class="border rounded w-full p-2">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-2">Bank Name:</label>
+                    <label class="block mb-2 font-bold">Bank Name:</label>
                     <input type="text" name="bankName" value="ANZ" class="border rounded w-full p-2">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-2">Name on card:</label>
+                    <label class="block mb-2 font-bold">Name on card:</label>
                     <input type="text" name="nameOnCard" value="Customer" class="border rounded w-full p-2">
                 </div>
+
             </div>
 
-            <div class="mb-4">
-                <label class="block mb-2">Coupon code:</label>
-                <input type="text" id="coupon-code" name="couponCode" placeholder="Enter coupon code" class="border rounded w-full p-2">
-                <button id="apply-coupon" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Apply Coupon
-                </button>
+            <div class="mb-4 mb-6">
+                <label class="block mb-2 font-bold">Coupon code:</label>
+                <div class="flex justify-between items-center">
+                    <input type="text" id="coupon-code" name="couponCode" placeholder="Enter coupon code" class="border rounded flex-grow p-2 mr-4">
+                    <button id="apply-coupon" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Apply Coupon
+                    </button>
+                </div>
                 <p id="discount-message" class="text-green-500 mt-2"></p>
             </div>
 
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">Pay</button>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded mt-4 shadow-lg hover:shadow-xl transition-all">Pay Now</button>
         </form>
     </div>
 </div>
@@ -101,7 +121,7 @@
         .then(data => {
             if (data.valid) {
                 const originalTotalElement = document.getElementById("total-amount");
-;
+
                 const originalTotal = parseFloat(originalTotalElement.textContent.split('$')[1]);
                 const newTotal = originalTotal * (1 - data.discount);
 
@@ -109,8 +129,11 @@
                 originalTotalElement.classList.add("line-through", "opacity-60");
                 
                 const newTotalElement = document.createElement('p');
+                newTotalElement.classList.add("col-span-2", "text-right", "font-bold", "text-xl");
+
+
                 newTotalElement.textContent = "Discounted Total: $" + newTotal.toFixed(2);
-                newTotalElement.classList.add("font-bold", "text-green-500");
+                newTotalElement.classList.add("font-bold", "text-green-500", "text-right"); // Added the text-right class
                 originalTotalElement.insertAdjacentElement('afterend', newTotalElement);
 
                 document.getElementById("discount-message").textContent = "Discount applied!";

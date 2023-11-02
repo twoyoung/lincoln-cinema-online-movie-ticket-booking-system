@@ -763,6 +763,10 @@ select {
   top: 0px;
 }
 
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
 .col-span-full {
   grid-column: 1 / -1;
 }
@@ -863,10 +867,6 @@ select {
   margin-top: 1rem;
 }
 
-.mt-5 {
-  margin-top: 1.25rem;
-}
-
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -926,6 +926,14 @@ select {
   max-height: 80vh;
 }
 
+.w-1\/2 {
+  width: 50%;
+}
+
+.w-1\/4 {
+  width: 25%;
+}
+
 .w-1\/6 {
   width: 16.666667%;
 }
@@ -982,6 +990,10 @@ select {
   flex-shrink: 0;
 }
 
+.flex-grow {
+  flex-grow: 1;
+}
+
 .table-auto {
   table-layout: auto;
 }
@@ -1002,6 +1014,10 @@ select {
 
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .flex-wrap {
@@ -1026,6 +1042,10 @@ select {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.gap-4 {
+  gap: 1rem;
 }
 
 .gap-6 {
@@ -1112,6 +1132,10 @@ select {
 
 .border-b {
   border-bottom-width: 1px;
+}
+
+.border-b-2 {
+  border-bottom-width: 2px;
 }
 
 .border-t-4 {
@@ -1356,6 +1380,11 @@ select {
   padding-bottom: 0.25rem;
 }
 
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
 .py-12 {
   padding-top: 3rem;
   padding-bottom: 3rem;
@@ -1383,6 +1412,10 @@ select {
 
 .pb-3 {
   padding-bottom: 0.75rem;
+}
+
+.pb-6 {
+  padding-bottom: 1.5rem;
 }
 
 .pt-16 {
@@ -1621,6 +1654,12 @@ select {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-all {
+  transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
