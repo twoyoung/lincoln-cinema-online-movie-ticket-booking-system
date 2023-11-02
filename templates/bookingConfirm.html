@@ -7,33 +7,48 @@
 <div class="max-w-lg mx-auto mt-12 bg-white p-8 shadow-md rounded-md">
     <h1 class="text-2xl font-bold mb-6 text-center">Booking Confirmation</h1>
 
-    <p class="mb-4">Dear <span class="font-bold">{{ user_name }}</span>,</p>
+    <p class="mb-4">Dear <span class="font-bold">
+    {% if booking.user.name %}
+        {{ booking.user.name }}
+    {% else %}
+        {{ booking.user.username }}
+    {% endif %}</span>,</p>
 
     <p class="mb-4">Thank you for booking with us. Here are your booking details:</p>
 
     <div class="mb-4">
-        <span class="block font-bold">Booking ID:</span>
+        <span class="font-bold">Booking ID:</span>
         <span>{{ booking.id }}</span>
     </div>
 
     <div class="mb-4">
-        <span class="block font-bold">Movie:</span>
+        <span class="font-bold">Movie:</span>
         <span>{{ booking.screening.movie.title }}</span>
     </div>
 
     <div class="mb-4">
-        <span class="block font-bold">Date & Time:</span>
-        <span>{{ booking.screening.screeningDate }} {{ booking.screening.startTime }} - {{ booking.screening.endTime }}</span>
+        <span class="font-bold">Date:</span>
+        <span>{{ booking.screening.screeningDate.strftime('%d-%m-%Y') }} </span>
     </div>
 
     <div class="mb-4">
-        <span class="block font-bold">Seats:</span>
+        <span class="font-bold">Time:</span>
+        <span>{{ booking.screening.startTime.strftime('%I:%M %p') }} - {{ booking.screening.endTime.strftime('%I:%M %p') }}</span>
+    </div>
+
+    <div class="mb-4">
+        <span class="font-bold">Hall:</span>
+        <span>{{ booking.screening.hall.name }}</span>
+    </div>
+
+    <div class="mb-4">
+        <span class="font-bold">Seats:</span>
         <span>{% for seat in booking.seats %} {{ seat.seatNumber }} {% if not loop.last %}, {% endif %}{% endfor %}</span>
     </div>
 
     <div class="mb-4">
-        <span class="block font-bold">Total Amount:</span>
-        <span>${{ booking.payment.discountedAmount }}</span>
+        <span class="font-bold">Total Amount:</span>
+        <span>${{ '{:.2f}'.format(booking.payment.discountedAmount)  }}</span>
     </div>
 
     <p class="mb-4">Enjoy the movie!</p>
