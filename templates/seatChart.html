@@ -4,34 +4,80 @@
 
 {% block content %}
 
-<form method="post" action="{{ url_for('movies.selectSeats', screeningId=screeningId) }}">
+<div class="container mx-auto mt-10 p-5 bg-white rounded-lg shadow-lg">
 
+    <!-- Title -->
+    <h1 class="text-center text-2xl font-semibold mb-6">Select Seats</h1>
 
-    <div class="seat-chart mt-10">
-        {% for seatRow in seatMatrix %}
-            <div class="flex justify-center mb-2">
-                {% for seat in seatRow %}
-                    {% if seat %}
-                        {% if seat.status == 'available' %}
-                            <div data-seat="available" data-seat-id="{{ seat.seatObject.id }}" class="seat w-10 h-10 mx-1 border border-black rounded-md cursor-pointer bg-green-500" title="Seat: {{ seat.seatObject.id }}; Price: ${{ seat.seatObject.price }}; Type: {{ seat.seatObject.type }}"></div>
-                        {% else %}
-                            <div class="seat w-10 h-10 mx-1 border border-black rounded-md bg-gray-400" title="Unavailable"></div>
-                        {% endif %}
-                    {% else %}
-                        <div class="seat w-10 h-10 mx-1 border border-black rounded-md bg-gray-400"></div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endfor %}
+    <!-- Screen Indication -->
+    <div class="flex justify-center items-center mb-6 relative">
+        <div class="w-full h-10 bg-gray-800 rounded-t mb-5"></div>
+        <span class="absolute text-lg font-semibold text-white px-2">SCREEN</span>
     </div>
 
-    <input type="hidden" name="selectedSeatIds" id="selectedSeatIdsInput">
-        <button id="bookSeats" class="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Book Seats
-        </button>
+    <form method="post" action="{{ url_for('movies.selectSeats', screeningId=screeningId) }}">
 
- </form>
+        <!-- Column Numbers -->
+        <div class="flex justify-center mb-2 text-sm">
+            {% for i in range(1, 16) %}
+                <div class="w-10 mx-1 text-end">{{ i }}</div>
+                {% if i % 5 == 0 and i != 15 %}
+                    <div class="mx-4"></div>
+                {% endif %}
+            {% endfor %}
+        </div>
 
+        <!-- Seat Chart -->
+        <div class="seat-chart mb-5">
+            {% for seatRow in seatMatrix %}
+                <!-- Row Letters -->
+                <div class="flex justify-center mb-2 items-center">
+                    <div class="w-6 mr-2 text-center">{{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[loop.index0] }}</div>
+                    {% for seat in seatRow %}
+                        {% if seat %}
+                            {% if seat.status == 'available' %}
+                                <div data-seat="available" data-seat-id="{{ seat.seatObject.id }}" class="seat w-10 h-10 mx-1 border border-black rounded-md cursor-pointer hover:bg-blue-500 bg-green-500" title="Seat: {{ seat.seatObject.id }}; Price: ${{ seat.seatObject.price }}; Type: {{ seat.seatObject.type }}"></div>
+                            {% else %}
+                                <div class="seat w-10 h-10 mx-1 border border-black rounded-md bg-gray-400" title="Unavailable"></div>
+                            {% endif %}
+                        {% else %}
+                            <div class="seat w-10 h-10 mx-1 border border-black rounded-md bg-transparent"></div>
+                        {% endif %}
+                        {% if loop.index % 5 == 0 and not loop.last %}
+                            <div class="mx-4"></div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Seat Labels -->
+        <div class="flex justify-center space-x-4 mb-5">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 bg-green-500"></div>
+                <span class="text-sm">Available</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 bg-blue-500"></div>
+                <span class="text-sm">Selected</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 bg-gray-400"></div>
+                <span class="text-sm">Unavailable</span>
+            </div>
+        </div>
+
+        <!-- Book Button -->
+        <div class="flex justify-center">
+            <input type="hidden" name="selectedSeatIds" id="selectedSeatIdsInput">
+            <button id="bookSeats" class="mt-2 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded shadow-lg transform hover:scale-105 transition-transform">
+                Book Seats
+            </button>
+        </div>
+
+    </form>
+
+</div>
 
 <script>
     let selectedSeatIds = [];
@@ -66,5 +112,7 @@
 </script>
 
 {% endblock %}
+
+
 
 
