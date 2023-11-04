@@ -1,0 +1,3091 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "Password",
+      "type": "admin"
+    },
+    {
+      "username": "customer",
+      "password": "Password",
+      "type": "customer"
+    },
+    {
+      "username": "staff",
+      "password": "Password",
+      "type": "staff"
+    }
+  ],
+  "coupons": [
+    {
+        "code": "ABC",
+        "expiryDate": "2023-12-01 10:00:00",
+        "discount": 0.10
+    }
+  ],
+  "screenings": [
+    {
+      "screeningDate": "2023-11-10",
+      "startTime": "2023-11-10 10:00:00",
+      "endTime": "2023-11-10 12:10:00",
+      "hallId": 1,
+      "status": "ACTIVE",
+      "movieId": 1
+    },
+    {
+      "screeningDate": "2023-11-10",
+      "startTime": "2023-11-10 14:30:00",
+      "endTime": "2023-11-10 16:15:00",
+      "hallId": 2,
+      "status": "ACTIVE",
+      "movieId": 2
+    },
+    {
+      "screeningDate": "2023-11-10",
+      "startTime": "2023-11-10 17:00:00",
+      "endTime": "2023-11-10 19:10:00",
+      "hallId": 3,
+      "status": "ACTIVE",
+      "movieId": 3
+    },
+    {
+      "screeningDate": "2023-11-20",
+      "startTime": "2023-11-20 11:30:00",
+      "endTime": "2023-11-20 13:40:00",
+      "hallId": 1,
+      "status": "ACTIVE",
+      "movieId": 1
+    },
+    {
+      "screeningDate": "2023-11-20",
+      "startTime": "2023-11-20 15:00:00",
+      "endTime": "2023-11-20 16:45:00",
+      "hallId": 2,
+      "status": "ACTIVE",
+      "movieId": 2
+    },
+    {
+      "screeningDate": "2023-11-20",
+      "startTime": "2023-11-20 18:30:00",
+      "endTime": "2023-11-20 20:40:00",
+      "hallId": 3,
+      "status": "ACTIVE",
+      "movieId": 3
+    },
+    {
+      "screeningDate": "2023-11-23",
+      "startTime": "2023-11-23 09:00:00",
+      "endTime": "2023-11-23 11:10:00",
+      "hallId": 1,
+      "status": "ACTIVE",
+      "movieId": 1
+    },
+    {
+      "screeningDate": "2023-11-23",
+      "startTime": "2023-11-23 13:00:00",
+      "endTime": "2023-11-23 14:45:00",
+      "hallId": 2,
+      "status": "ACTIVE",
+      "movieId": 2
+    },
+    {
+      "screeningDate": "2023-11-23",
+      "startTime": "2023-11-23 16:30:00",
+      "endTime": "2023-11-23 18:40:00",
+      "hallId": 3,
+      "status": "ACTIVE",
+      "movieId": 3
+    }
+  ],
+  "movies": [
+    {
+      "title": "Inception",
+      "language": "English",
+      "genre": "Science Fiction",
+      "releaseDate": "2010-07-16",
+      "country": "USA",
+      "description": "A thief who enters the dreams of others to steal secrets tries a final job.",
+      "durationMins": 148
+    },
+    {
+      "title": "Parasite",
+      "language": "Korean",
+      "genre": "Thriller",
+      "releaseDate": "2019-05-30",
+      "country": "South Korea",
+      "description": "A family of four infiltrates the lives of a wealthy family.",
+      "durationMins": 132
+    },
+    {
+      "title": "The Intouchables",
+      "language": "French",
+      "genre": "Drama",
+      "releaseDate": "2011-11-20",
+      "country": "France",
+      "description": "An unexpected friendship develops between a quadriplegic aristocrat and his caregiver.",
+      "durationMins": 112
+    },
+    {
+      "title": "Journey to Arcadia",
+      "language": "English",
+      "genre": "Adventure",
+      "releaseDate": "2023-06-05",
+      "country": "USA",
+      "description": "An epic quest to the mysterious land of Arcadia, where heroes face ancient challenges.",
+      "durationMins": 130,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Cyber Dreams",
+      "language": "English",
+      "genre": "Sci-Fi",
+      "releaseDate": "2023-07-12",
+      "country": "USA",
+      "description": "Set in a dystopian future where technology reigns supreme, a lone hacker tries to break free.",
+      "durationMins": 115,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Moonlight Sonata",
+      "language": "English",
+      "genre": "Romance",
+      "releaseDate": "2022-11-25",
+      "country": "UK",
+      "description": "Two souls intertwined by fate, dance under the moonlight, rediscovering love.",
+      "durationMins": 100,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "King's Legacy",
+      "language": "English",
+      "genre": "Historical Drama",
+      "releaseDate": "2023-02-15",
+      "country": "UK",
+      "description": "The tale of a young prince's ascent to the throne amidst political turmoil.",
+      "durationMins": 140,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Guardians of the Abyss",
+      "language": "English",
+      "genre": "Action",
+      "releaseDate": "2022-12-05",
+      "country": "USA",
+      "description": "A team of explorers venture deep into the world's deepest oceans, only to discover a world they never knew existed.",
+      "durationMins": 123,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Desert Mirage",
+      "language": "English",
+      "genre": "Mystery",
+      "releaseDate": "2023-05-15",
+      "country": "USA",
+      "description": "In the heart of the desert, a detective is drawn into a case of disappearances and mirages that blur reality and illusion.",
+      "durationMins": 110,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Winter's Embrace",
+      "language": "English",
+      "genre": "Drama",
+      "releaseDate": "2023-01-20",
+      "country": "Canada",
+      "description": "A family drama set against the backdrop of a harsh Canadian winter, testing the bonds of love and trust.",
+      "durationMins": 120,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Flight of the Phoenix",
+      "language": "English",
+      "genre": "Fantasy",
+      "releaseDate": "2023-08-12",
+      "country": "UK",
+      "description": "After the world is consumed by darkness, a young mage embarks on a journey to find the mythical Phoenix to bring back the light.",
+      "durationMins": 135,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Echoes from the Past",
+      "language": "English",
+      "genre": "Thriller",
+      "releaseDate": "2022-09-17",
+      "country": "Australia",
+      "description": "A historian's obsession with an ancient relic awakens spirits seeking revenge.",
+      "durationMins": 105,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Starship Nebula",
+      "language": "English",
+      "genre": "Sci-Fi",
+      "releaseDate": "2023-10-03",
+      "country": "USA",
+      "description": "Spacefarers find themselves in a race against time to save their ship and crew from an unknown alien entity in the vastness of space.",
+      "durationMins": 142,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "The Last Ballad",
+      "language": "English",
+      "genre": "Musical",
+      "releaseDate": "2022-07-29",
+      "country": "France",
+      "description": "A talented musician's life and love are chronicled through the songs he writes in the romantic streets of Paris.",
+      "durationMins": 115,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Silent Whispers",
+      "language": "English",
+      "genre": "Horror",
+      "releaseDate": "2023-03-13",
+      "country": "USA",
+      "description": "When a group of friends visit an old mansion, they soon realize the whispers they hear are not just their imagination.",
+      "durationMins": 98,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "The Golden Heist",
+      "language": "English",
+      "genre": "Action",
+      "releaseDate": "2023-04-21",
+      "country": "Spain",
+      "description": "A master thief assembles a team to pull off the heist of the century in Spain's most guarded vault.",
+      "durationMins": 125,
+      "status": "ACTIVE"
+    },
+    {
+      "title": "Legends of Avalon",
+      "language": "English",
+      "genre": "Fantasy",
+      "releaseDate": "2022-10-15",
+      "country": "UK",
+      "description": "Knights, dragons, and magic. Dive into the legends of King Arthur and the mystical island of Avalon.",
+      "durationMins": 140,
+      "status": "ACTIVE"
+    }
+  ],
+  "cinemaHalls": [
+    {
+      "name": "Hall 1",
+      "totalSeats": 120
+    },
+    {
+      "name": "Hall 2",
+      "totalSeats": 90
+    },
+    {
+      "name": "Hall 3",
+      "totalSeats": 110
+    },
+    {
+      "name": "Hall 4",
+      "totalSeats": 80
+    }
+  ],
+  "cinemaHallSeats": [
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "A",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "B",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "C",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "D",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "E",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "F",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "G",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 1,
+        "seatRow": "H",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "A",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "B",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "C",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "D",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "E",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 2,
+        "seatRow": "F",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "A",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "B",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "C",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "D",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "E",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "F",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "G",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "H",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "H",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "H",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "H",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 3,
+        "seatRow": "H",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "A",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "B",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "C",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "D",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 6,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 7,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 8,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 9,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 10,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 11,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 12,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 13,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 14,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "E",
+        "seatColumn": 15,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "F",
+        "seatColumn": 1,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "F",
+        "seatColumn": 2,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "F",
+        "seatColumn": 3,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "F",
+        "seatColumn": 4,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    },
+    {
+        "hallId": 4,
+        "seatRow": "F",
+        "seatColumn": 5,
+        "seatType": "Regular",
+        "seatPrice": 12.99
+    }
+]
+
+
+}

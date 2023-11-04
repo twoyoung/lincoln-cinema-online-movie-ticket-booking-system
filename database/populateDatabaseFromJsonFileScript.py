@@ -6,7 +6,7 @@ from datetime import datetime
 print("Starting script...")
 # Populate the database from JSON file
 def populateDatabaseFromJson(filename):
-    if filename == 'seats.json':
+    if filename == 'db_data.json':
         with open(filename, 'r') as file:
             data = json.load(file)
             print('Loading file...')
@@ -83,4 +83,4 @@ def populateDatabaseFromJson(filename):
 if __name__ == '__main__':
     print('Starting...')
     with app.app_context():
-        populateDatabaseFromJson('seats.json')
+        populateDatabaseFromJson('db_data.json')
