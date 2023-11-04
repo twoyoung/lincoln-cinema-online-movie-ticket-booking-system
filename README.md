@@ -36,9 +36,9 @@ lincoln-cinema-online-movie-ticket-booking-system/
 
 - steps to run this application
   - Install the packages from requirements.txt
-  ```
-  pip install -r requirements.txt
-  ```
+    ```
+    pip install -r requirements.txt
+    ```
   - Setup database using the script create_db.py
     ```
     ./.venv/bin/python create_db.py
