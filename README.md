@@ -41,11 +41,14 @@ lincoln-cinema-online-movie-ticket-booking-system/
      ```
     
   2. Setup database using the script create_db.py.
-     After running the script, cinema.db will be generated under folder instance.
-     If you want to visualize the data from SQLiteStudio, import the cinema.db to  SQLiteStudio
+     
      ```
      ./.venv/bin/python create_db.py
-     ``` 
+     ```
+     After running the script, cinema.db will be generated under folder instance.
+     
+     If you want to visualize the data from SQLiteStudio, import the cinema.db to  SQLiteStudio.
+     
   4. Populate database from db_data.json
      ```
      ./.venv/bin/python populateDatabaseFromJsonFileScript.py
