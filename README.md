@@ -40,15 +40,17 @@ lincoln-cinema-online-movie-ticket-booking-system/
      pip install -r requirements.txt
      ```
     
-  2. Setup database using the script create_db.py. After running the script, cinema.db will be generated under folder instance. If you want to visualize the data from SQLiteStudio, import the cinema.db to  SQLiteStudio
+  2. Setup database using the script create_db.py.
+     After running the script, cinema.db will be generated under folder instance.
+     If you want to visualize the data from SQLiteStudio, import the cinema.db to  SQLiteStudio
      ```
      ./.venv/bin/python create_db.py
      ``` 
-  3. Populate database from db_data.json
+  4. Populate database from db_data.json
      ```
      ./.venv/bin/python populateDatabaseFromJsonFileScript.py
      ```
-  4. Now run the application locally
+  5. Now run the application locally
      ```
      flask run
      ```
