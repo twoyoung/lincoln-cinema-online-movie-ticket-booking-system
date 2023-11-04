@@ -37,21 +37,21 @@ lincoln-cinema-online-movie-ticket-booking-system/
 ## steps to run this application
   1. Install the packages from requirements.txt
      ```
-    pip install -r requirements.txt
-    ```
+     pip install -r requirements.txt
+     ```
     
   2. Setup database using the script create_db.py. After running the script, cinema.db will be generated under folder instance. If you want to visualize the data from SQLiteStudio, import the cinema.db to  SQLiteStudio
      ```
-    ./.venv/bin/python create_db.py
-    ``` 
+     ./.venv/bin/python create_db.py
+     ``` 
   3. Populate database from db_data.json
      ```
-    ./.venv/bin/python populateDatabaseFromJsonFileScript.py
-    ```
+     ./.venv/bin/python populateDatabaseFromJsonFileScript.py
+     ```
   4. Now run the application locally
      ```
-    flask run
-    ```
+     flask run
+     ```
     
        
   
