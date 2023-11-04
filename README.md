@@ -1,7 +1,7 @@
 # lincoln-cinema-online-movie-ticket-booking-system
 
 - File structure
-
+```
 lincoln-cinema-online-movie-ticket-booking-system/
 ├── .venv
 ├── app/
@@ -32,6 +32,7 @@ lincoln-cinema-online-movie-ticket-booking-system/
 ├── instance/
 │   └── cinema.db  # database created by create_db.py
 └── requirements.txt
+```
 
 - steps to run this application
   - Install the packages from requirements.txt
