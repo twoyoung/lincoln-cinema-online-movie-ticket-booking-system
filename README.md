@@ -1,5 +1,10 @@
 # lincoln-cinema-online-movie-ticket-booking-system
 
+- This is a simple web application designed for managing a cinema ticket booking system.   
+- It is built using Object-Oriented Programming (OOP) principles and follows the Model-View-Controller (MVC) architecture.   
+- To adhere to the concept of a fat model and thin controller, most of the business logic is encapsulated within the model methods.   
+- The application utilizes SQLAlchemy for its database management.
+
 ## File structure
 ```
 lincoln-cinema-online-movie-ticket-booking-system/
@@ -34,7 +39,7 @@ lincoln-cinema-online-movie-ticket-booking-system/
 └── requirements.txt
 ```
 
-## steps to run this application
+## Steps to run this application
   1. Install the packages from requirements.txt
      ```
      pip install -r requirements.txt
