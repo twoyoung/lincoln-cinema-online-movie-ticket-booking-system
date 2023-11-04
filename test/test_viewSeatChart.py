@@ -1,7 +1,7 @@
 from flask import template_rendered
 from contextlib import contextmanager
 from unittest.mock import patch
-from app import app
+from . import run
 from models.movieModel import CinemaHall, CinemaHallSeat, Screening
 
 @contextmanager
@@ -30,7 +30,7 @@ def test_view_seat_chart(test_client, init_database):
 
     with patch.object(Screening, 'getActiveScreeningById', return_value=mock_screening), \
          patch.object(Screening, 'filteredBooking', return_value=mock_booking):
-        with captured_templates(app) as templates:
+        with captured_templates(run) as templates:
             response = test_client.get("/book/1/seats")
             print(response.data)
             assert response.status_code == 302

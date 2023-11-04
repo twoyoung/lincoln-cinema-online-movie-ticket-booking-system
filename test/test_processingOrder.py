@@ -6,9 +6,9 @@ from models import Booking, Payment, Screening, Seats
 # A fixture for the Flask test client
 @pytest.fixture
 def client():
-    from app import app
-    app.config['TESTING'] = True
-    with app.test_client() as client:
+    from . import run
+    run.config['TESTING'] = True
+    with run.test_client() as client:
         yield client
 
 # A fixture for the movie controller

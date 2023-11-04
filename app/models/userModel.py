@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from app import db
-from models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, MovieStatus, ScreeningStatus
+from ..database import db
+from ..models import Movie, Screening, Booking, BookingStatus, CinemaHallSeat, MovieStatus, ScreeningStatus
 from typing import List, Union, Tuple
 from sqlalchemy.orm.exc import NoResultFound
 import bcrypt

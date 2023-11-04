@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from sqlalchemy.orm import relationship, backref
-from app import db
+from ..database import db
 from typing import List, Union
 from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
-from app import db
+from ..database import db
 from datetime import datetime
 from sqlalchemy.orm import backref
-from models import BookingStatus
+from ..models import BookingStatus
 
 
 

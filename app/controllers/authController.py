@@ -1,4 +1,4 @@
-from models import Guest, User
+from ..models import Guest, User
 from flask import render_template, flash, redirect, url_for, session
 
 class AuthController:

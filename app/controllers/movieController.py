@@ -1,6 +1,6 @@
 from flask import jsonify, redirect, render_template, url_for, flash, get_flashed_messages, session
 from sqlalchemy import desc
-from models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification, MovieStatus
+from ..models import General, User, Movie, CinemaHallSeat, Booking, BookingStatus, Payment, Screening, CreditCard, DebitCard, Coupon, CashPayment, Eftpos, Notification, MovieStatus
 from typing import List
 from datetime import datetime
 from collections import defaultdict

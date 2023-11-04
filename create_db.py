@@ -1,5 +1,6 @@
-from app import db, app
-from models import *
+from app import create_app
+from app.database import db
+from app.models import *
 
 def create_database():
     with app.app_context():
@@ -8,4 +9,5 @@ def create_database():
         print("Tables created successfully!")
 
 if __name__ == "__main__":
+    app = create_app()
     create_database()

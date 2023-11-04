@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session, url_for, redirect, flash, render_template
-from controllers import MovieController, AuthController
+from ..controllers import MovieController, AuthController
 from functools import wraps
 
 def login_required(f):
