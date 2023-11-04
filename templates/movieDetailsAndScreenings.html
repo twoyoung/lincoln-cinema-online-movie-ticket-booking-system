@@ -91,9 +91,9 @@
         <!-- Title -->
         <h2 class="text-xl font-semibold mb-4 text-pink-600">Screenings</h2>
         <!-- <select id="dateDropdown" class="mb-4"></select> -->
-        <select id="dateDropdown" data-firstdate="{{ dateList[0].strftime('%Y-%m-%d') }}" class="mb-4">
+        <select id="dateDropdown" data-firstdate="{{ dateList[0]}}" class="mb-4">
             {% for date in dateList %}
-            <option value="{{ date.strftime('%Y-%m-%d') }}">{{ date.strftime('%d %B, %Y') }}</option>
+            <option value="{{ date }}">{{ date }}</option>
             {% endfor %}
         </select>
 
@@ -192,6 +192,7 @@
     window.onload = function() {
 
     let dropdown = document.getElementById('dateDropdown');
+    let firstDate = dropdown.getAttribute('data-firstDate');
     dropdown.value = dropdown.getAttribute('data-firstdate');
     dropdown.dispatchEvent(new Event('change'));
 

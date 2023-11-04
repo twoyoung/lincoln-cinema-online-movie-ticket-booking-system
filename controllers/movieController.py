@@ -38,7 +38,8 @@ class MovieController:
             # Check if 'userType' exists in session. If not, default to 'guest'
             userType = session.get('userType', 'guest')
             dateList = list(sorted(screeningsByDate.keys(), reverse=False))
-            print(dateList)
+            if dateList == []:
+                dateList = ['---']
             return render_template("movieDetailsAndScreenings.html", dateList=dateList, screeningsByDate=screeningsByDate, movie=movie, userType=userType)
         else:
             flash("Movie does not exist or has been cancelled.", 'error')
