@@ -62,6 +62,16 @@ lincoln-cinema-online-movie-ticket-booking-system/
      ```
      flask run
      ```
+## Default account
+- customer:
+  - username: customer
+  - password: Password
+- staff:
+  - username: staff
+  - password: Password
+- admin:
+  - username: admin
+  - password: Password
     
        
   
