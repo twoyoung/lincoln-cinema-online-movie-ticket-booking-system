@@ -41,7 +41,6 @@ lincoln-cinema-online-movie-ticket-booking-system/
 ```
 
 ## Steps to set up and populate sqlAlchemy database before running the application
-<<<<<<< Updated upstream
   1. Install the packages from requirements.txt
      ```
      pip install -r requirements.txt
@@ -73,34 +72,3 @@ lincoln-cinema-online-movie-ticket-booking-system/
 - admin:
   - username: admin
   - password: Password
-    
-       
-  
-=======
-
-1. Install the packages from requirements.txt
-
-   ```
-   pip install -r requirements.txt
-   ```
-
-2. Setup database using the script create_db.py.
-
-   ```
-   ./.venv/bin/python create_db.py
-   ```
-
-   After running the script, cinema.db will be generated under folder instance.  
-   If you want to visualize the data from SQLiteStudio, import the cinema.db to SQLiteStudio.
-
-3. Populate database from db_data.json
-   ```
-   ./.venv/bin/python populateDatabaseFromJsonFileScript.py
-   ```
-4. Now run the application locally
-   ```
-   flask run
-   ```
-
-
->>>>>>> Stashed changes
