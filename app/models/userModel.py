@@ -117,7 +117,7 @@ class User(Person, db.Model):
         if bcrypt.checkpw(password.encode('utf-8'), user._password.encode('utf-8')):
             session['userId'] = user.id
             session['userType'] = user.type
-            return True, "Logged in successfully."
+            return True, f"Welcome {username}! You have logged in successfully."
         else:
             return False, "Incorrect password."
 
@@ -185,7 +185,10 @@ class BookingMixin:
             from .paymentModel import Refund
             Refund.createRefund(existingBooking.payment.id, refundAmount, "Booking Canceled")
             db.session.commit()
-            return True, "Booking canccelled successfully and refund has been processed."
+            if booking.payment.type == 'cash':
+                return True, f"Booking canccelled successfully. Please refund the customer ${refundAmount}."
+            else:
+                return True, "Booking canccelled successfully and refund has been processed."
         else:
             return False, "Unvalid booking status."
 
@@ -301,7 +304,7 @@ class Admin(User):
                         booking.sendNotification(action="canceled")
 
             db.session.commit()
-            return True, "Screening and its bookings cancelled successfully."
+            return True, "Screening and its bookings cancelled successfully. Refund being processed."
 
 # FrontDeskStaff class
 class FrontDeskStaff(User, BookingMixin):
