@@ -2,7 +2,7 @@
 
 - This is a simple web application designed for managing a cinema ticket booking system.   
 - It is built using Object-Oriented Programming (OOP) principles and follows the Model-View-Controller (MVC) architecture.   
-- To adhere to the concept of a fat model and thin controller, most of the business logic is encapsulated within the model methods.   
+- To adhere to the concept of a fat model and thin controller, most of the business logic, data validation, and all database interactions are encapsulated within the model methods.  
 - The application utilizes SQLAlchemy for its database management.
 
 ## File structure
