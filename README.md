@@ -39,7 +39,7 @@ lincoln-cinema-online-movie-ticket-booking-system/
 └── requirements.txt
 ```
 
-## Steps to run this application
+## Steps to set up and populate sqlAlchemy database before running the application
   1. Install the packages from requirements.txt
      ```
      pip install -r requirements.txt
