@@ -49,7 +49,6 @@
                         <a href="{{ url_for('movies.cancelMovie') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">Cancel a movie</a>
                     {% endif %}
                     
-                    <!-- <i class="fas fa-user text-xl"></i> -->
                     <a href="{{ url_for('auth.logout') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">Logout</a>
                 {% else %}
                     <a href="{{ url_for('auth.login') }}" class="hover:bg-gray-600 hover:bg-opacity-50 px-3 py-2 rounded transition">Login</a>
@@ -146,23 +145,32 @@
             }
         });
 
+
         $(document).on('click', '.notification-item a', function (event) {
             event.preventDefault();
+            event.stopPropagation(); 
 
-            const notificationId = $(this).data('id');
-            const isExpanded = $(this).data('expanded');
+            const notificationItem = $(this).closest('.notification-item');
+            const notificationId = notificationItem.data('id');
+            let isExpanded = notificationItem.data('expanded');
+
+            console.log("Before Toggle - Notification ID:", notificationId, "Is Expanded:", isExpanded);
 
             if (isExpanded) {
-                $(this).find('span').removeClass('line-clamp-none').addClass('line-clamp-1');
-                $(this).data('expanded', false);
+                notificationItem.find('span').removeClass('line-clamp-none').addClass('line-clamp-1');
+                notificationItem.data('expanded', false);
             } else {
-                $(this).find('span').removeClass('line-clamp-1').addClass('line-clamp-none');
-                $(this).data('expanded', true);
+                notificationItem.find('span').removeClass('line-clamp-1').addClass('line-clamp-none');
+                notificationItem.data('expanded', true);
             }
 
+            isExpanded = notificationItem.data('expanded');
+            console.log("After Toggle - Is Expanded:", isExpanded);
+
             $.post('/api/mark-notification-read', { id: notificationId }, function (response) {
+
                 if (response.success) {
-                    fetchNotifications();
+                    setTimeout(fetchNotifications, 5000);
                 }
             });
         });

@@ -49,7 +49,7 @@
         {% for movie in allMovies %}
         <a href="{{ url_for('movies.showMovieDetailsAndScreenings', movieId=movie.id) }}" class="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-150 no-underline hover:no-underline opacity-90 backdrop-blur-md transform hover:scale-105">
             <img src="/static/moviePosters/sample.jpg" alt="{{ movie.title }}" class="w-full h-64 object-cover rounded-lg mb-4">
-            <h2 class="text-xl font-semibold mb-3 text-gray-700">{{ movie.title }}</h2>
+            <h2 class="text-xl font-semibold mb-3 text-gray-700">{{ movie.title }} ({{ movie.releaseDate.year }})</h2>
             <p class="text-gray-600 line-clamp-3">{{ movie.description }}</p>
         </a>
         {% endfor %}
