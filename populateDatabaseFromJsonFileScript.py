@@ -1,9 +1,9 @@
 import json
 from app import db
-from models import Movie, User, CinemaHall, CinemaHallSeat, Screening, Coupon
+from app.models import Movie, User, CinemaHall, CinemaHallSeat, Screening, Coupon
 from datetime import datetime
 
-from . import run
+from run import app
 
 print("Starting script...")
 # Populate the database from JSON file
@@ -84,5 +84,5 @@ def populateDatabaseFromJson(filename):
 
 if __name__ == '__main__':
     print('Starting...')
-    with run.app_context():
+    with app.app_context():
         populateDatabaseFromJson('db_data.json')
