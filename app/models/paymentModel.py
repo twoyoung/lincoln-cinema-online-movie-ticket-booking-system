@@ -1,19 +1,16 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 from ..database import db
+from typing import Tuple
 from datetime import datetime
 from sqlalchemy.orm import backref
 from ..models import BookingStatus
 
 
-
+# Payment class/table
 class Payment(db.Model):
-    # __abstract__ = True
-    __tablename__ = 'payments'
 
-    # @declared_attr
-    # def __tablename__(cls):
-    #     return cls.__name__.lower()
+    __tablename__ = 'payments'
     
     id = db.Column(db.Integer, primary_key=True)
     originalAmount = db.Column(db.Float, nullable=False)
@@ -22,15 +19,8 @@ class Payment(db.Model):
     type = db.Column(db.String(50))
     couponId = db.Column(db.String, db.ForeignKey('coupons.id'))
 
-    # @declared_attr
-    # def coupon(cls):
-        # return
     coupon = relationship('Coupon', backref='payments')
-    # bookingId = db.Column(db.Integer, db.ForeignKey('bookings.id'))
-    
-    # @declared_attr
-    # def booking(cls):
-    #     return 
+
     booking = relationship('Booking', back_populates='payment', uselist=False)
 
     __mapper_args__ = {
@@ -38,33 +28,45 @@ class Payment(db.Model):
         'polymorphic_identity': 'payment'
     }
 
+    # method to calculate discount
     def calcDiscount(self) -> float:
         discount = 0
         if self.coupon and Coupon.couponIsValid(self.coupon.code):
             discount += self.coupon.discount
         return discount
 
+    # method to calculate final amount after discount
     def calcFinalPayment(self) -> float:
         return self.originalAmount * (1 - self.calcDiscount())
     
+    # method to create payment object and add to database
     @staticmethod
-    def createPayment(payment: "Payment") -> "Payment":
+    def createPayment(payment: "Payment") -> Tuple[bool, str]:
+        # if payment exist and already paid, return false
+        existingPayment = Payment.query.filter(Payment.booking == payment.booking)
+        if existingPayment and payment.booking.status == BookingStatus.CONFIRMED:
+            return False, "Already paid."
         payment.discountedAmount = round(payment.calcFinalPayment(), 2)
         db.session.add(payment)
 
+        # if payment successful, change the booking's status to confirmed
         payment.booking.status = BookingStatus.CONFIRMED
 
+        # add the payment to the booking
         payment.booking.payment = payment
 
         db.session.commit()
         
+        # after payment successful, send notification to the customer
         payment.booking.sendNotification()
-        return payment
+        return True, "Payment successful."
     
+    # method to get the payment by id
     @staticmethod
     def getPaymentById(paymentId: int) -> "Payment":
         return Payment.query.get(paymentId)
-    
+
+# CreditCard class/table  
 class CreditCard(Payment):
     __tablename__ = 'creditcards'
 
@@ -77,7 +79,7 @@ class CreditCard(Payment):
         'polymorphic_identity': 'creditcard'
     }
 
-
+# DebitCard class/table
 class DebitCard(Payment):
     __tablename__ = 'debitcards'
     
@@ -90,6 +92,7 @@ class DebitCard(Payment):
         'polymorphic_identity': 'debitcard'
     }
 
+# CashPayment class/table
 class CashPayment(Payment):
     __tablename__ = 'cashPayments'
 
@@ -101,9 +104,11 @@ class CashPayment(Payment):
         'polymorphic_identity': 'cash'
     }
 
+    # method to calculate amount of change
     def calcChange(self) -> float:
         return self.receivedCash - self.discountedAmount
 
+# Eftpos class/table
 class Eftpos(Payment):
     __tablename__ = 'eftpos'
 
@@ -113,6 +118,7 @@ class Eftpos(Payment):
         'polymorphic_identity': 'eftpos'
     }
 
+# Coupon class/table
 class Coupon(db.Model):
     __tablename__ = 'coupons'
     
@@ -120,14 +126,8 @@ class Coupon(db.Model):
     code = db.Column(db.String, nullable=False)
     expiryDate = db.Column(db.DateTime, nullable=False)
     discount = db.Column(db.Float, nullable=False)
-
-    # @staticmethod
-    # def createCoupon(data: dict) -> "Coupon":
-    #     coupon = Coupon(**data)
-    #     db.session.add(coupon)
-    #     db.session.commit()
-    #     return coupon
     
+    # method to get coupon by code
     @staticmethod
     def getCouponByCode(code: str) -> "Coupon":
         if Coupon.couponIsValid(code):
@@ -135,16 +135,19 @@ class Coupon(db.Model):
         else:
             return None
 
+    # method to check if coupon is valid
     @staticmethod
     def couponIsValid(code: str) -> bool:
+        # check if the same code exists in the database
         existingCoupon = Coupon.query.filter(code == Coupon.code).first()
         if not existingCoupon:
             return False
+        # check if coupon expired
         if existingCoupon.expiryDate < datetime.now():
             return False
         return True
 
-
+# Refunc class/table
 class Refund(db.Model):
     __tablename__ = 'refunds'
 
@@ -155,6 +158,7 @@ class Refund(db.Model):
     processedOn = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     reason = db.Column(db.String, nullable=False)
     
+    # method to create a refund object in database
     @staticmethod
     def createRefund(paymentId: int, amount: float, reason: str) -> "Refund":
         refund = Refund(paymentId=paymentId, amount=amount, reason=reason)

@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request, session, url_for, redirect, flash
 from ..controllers import MovieController, AuthController
 from functools import wraps
 
+# decorator to limit access to protected pages
+# only login user can access
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -10,6 +12,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return wrapper
 
+# only admin user can access
 def admin_required(f):
     @login_required
     @wraps(f)
@@ -20,6 +23,7 @@ def admin_required(f):
         return f(*args, **kwargs)
     return wrapper
 
+# only customer can access
 def customer_required(f):
     @login_required
     @wraps(f)
@@ -34,11 +38,12 @@ def customer_required(f):
 movie_bp = Blueprint('movies', __name__)
 auth_bp = Blueprint('auth', __name__)
 
-
+# home page
 @movie_bp.route('/', methods=['GET'])
 def home():
     return MovieController.browseMovies()
 
+# browse all movies or search for movies
 @movie_bp.route('/movies', methods = ['GET', 'POST'])
 def showMovies():
     title = request.args.get('title')
@@ -56,11 +61,13 @@ def showMovies():
     else:
         return MovieController.browseMovies()
     
+# display a movie's details and screenings
 @movie_bp.route('/movies/<movieId>', methods=['GET', 'POST'])
 def showMovieDetailsAndScreenings(movieId):
     return MovieController.viewMovieDetailsAndScreenings(movieId)
 
 
+# display a screening's seat charts
 @movie_bp.route('/book/<screeningId>/seats', methods=['GET', 'POST'])
 @login_required
 def selectSeats(screeningId):
@@ -69,6 +76,7 @@ def selectSeats(screeningId):
         return MovieController.processBooking(session['userId'], screeningId=screeningId, selectedSeatIds=selectedSeatIds)   
     return MovieController.viewSeatChart(screeningId)
 
+# if 'GET', display payment page; if 'POST', get payment information and process booking
 @movie_bp.route('/book/<bookingId>/payment/online', methods=['GET', 'POST'])
 @customer_required
 def paymentOnline(bookingId):
@@ -121,27 +129,32 @@ def paymentOnsite(bookingId):
         return MovieController.processBooking(session['userId'], paymentData=paymentData)
     return MovieController.showPaymentPageOnsite(bookingId=bookingId)
 
+# get data from javascript code to validate coupon
 @movie_bp.route('/api/validate-coupon', methods=['POST'])
 def validateCoupon():
     data = request.json
     couponCode = data.get('couponCode')
     return MovieController.validateCouponCode(couponCode)
 
+# display booking confirmation page
 @movie_bp.route('/book/<bookingId>/confirm', methods=['GET'])
 @login_required
 def confirmBooking(bookingId):
     return MovieController.confirmBooking(bookingId=bookingId)
 
+# check all bookings
 @movie_bp.route('/bookings', methods=['GET'])
 @login_required
 def viewBookings():
     return MovieController.viewBookings(session['userId'])
 
+# cancel booking
 @movie_bp.route('/cancel/<bookingId>', methods=['POST'])
 @login_required
 def cancelBooking(bookingId):
     return MovieController.cancelBooking(session['userId'], bookingId)
 
+# if 'GET', display add movie page; if 'POST', get data from input and add a movie
 @movie_bp.route('/add/movie', methods=['GET', 'POST'])
 @admin_required
 def addMovie():
@@ -158,6 +171,7 @@ def addMovie():
         return MovieController.addMovie(session['userId'], newMovieData)
     return MovieController.showAddMoviePage()
 
+# add screening
 @movie_bp.route('/add/movie/<movieId>/screening', methods=['POST'])
 @admin_required
 def addScreening(movieId):
@@ -170,6 +184,7 @@ def addScreening(movieId):
     }
     return MovieController.addScreening(session['userId'], newScreeningData) 
 
+# cancel movie
 @movie_bp.route('/cancel/movie', methods=['GET'])
 @movie_bp.route('/cancel/movie/<movieId>', methods=['GET', 'POST'])
 @admin_required
@@ -180,23 +195,26 @@ def cancelMovie(movieId=None):
         return redirect(url_for('movies.showMovieDetails',movieId=movieId))
     else:
         return MovieController.showCancelMoviePage()
-
+    
+# cancel screening
 @movie_bp.route('/cancel/screening/<screeningId>', methods=['POST'])
 @admin_required
 def cancelScreening(screeningId):
     return MovieController.cancelScreening(session['userId'], screeningId)
 
+# work together with javascript code to get notification
 @movie_bp.route('/api/get-notifications')
 @customer_required
 def getNotifications():
     return MovieController.getNotifications(session['userId'])
 
+# work together with javascript code to mark notificaton
 @movie_bp.route('/api/mark-notification-read', methods=['POST'])
 def markNotificationRead():
     notificationId = request.form['id']
     return MovieController.markNotificationRead(notificationId)
 
-
+# display sign up page if 'GET' and sign up if 'POST'
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -205,6 +223,7 @@ def signup():
         return AuthController.register(username, password)
     return AuthController.showSignup()
 
+# display login page if 'GET' and login if 'POST'
 @auth_bp.route('/login', methods = ['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -213,6 +232,7 @@ def login():
         return AuthController.login(username, password)
     return AuthController.showLogin()
 
+# logout
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():

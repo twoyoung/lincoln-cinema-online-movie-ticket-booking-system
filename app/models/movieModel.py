@@ -20,23 +20,27 @@ class BookingStatus(Enum):
     CONFIRMED = 2
     CANCELLED = 3
 
+# an abstract mixin class to check if a screening is status active and start time in the future
 class ScreeningValidationMixin:
+
+    # method to check if the screening's status is active
     def isActiveScreening(self) -> bool:
         if self.status == ScreeningStatus.ACTIVE:
             return True
         return False
     
+    # method to check if the screening is in the future
     def isFutureScreening(self) -> bool:
         today = datetime.now()
         now = datetime.now()
-        print(self.screeningDate.date())
-        print(self.startTime.time())
-        print(self.screeningDate.date() > today.date() or (self.screeningDate.date() == today.date() and self.startTime.time() > now.time()))
         if self.screeningDate.date() > today.date() or (self.screeningDate.date() == today.date() and self.startTime.time() > now.time()):
             return True
         return False
     
+# a mixin class to filter the booking list
 class BookingListFilterMixin:
+
+    # method to filter the booking list to get rid of canceled bookings
     @staticmethod
     def filteredBooking(bookingList: ["Booking"]) -> ["Booking"]:
         filteredBookingList = []
@@ -64,6 +68,7 @@ class Movie(db.Model, ScreeningValidationMixin):
 
     screenings = relationship("Screening", backref="movies")
 
+    # method to get the movie's screenings list
     def getScreenings(self) -> List["Screening"]:
         screeningsList = []
         for screening in self.screenings:
@@ -71,6 +76,7 @@ class Movie(db.Model, ScreeningValidationMixin):
                 screeningsList.append(screening)
         return screeningsList
     
+    # method to add a screening to the movie
     def addScreening(self, screening) -> bool:
         if screening not in self.screenings:
             self.screenings.append(screening)
@@ -79,16 +85,19 @@ class Movie(db.Model, ScreeningValidationMixin):
             return True
         return False
 
+    # method to remove a screening from the movie's screening list
     def removeScreening(self, screening) -> bool:
         if screening in self.screenings:
             self.screenings.remove(screening)
             return True
         return False
     
+    # method to get the movie by id
     @staticmethod
     def getMovieById(movieId: int) -> Union["Movie", None]:
         return  Movie.query.get(movieId)
 
+    # method to only get active movie by id
     @staticmethod
     def getActiveMovieById(movieId: int) -> Union["Movie", None]:
         movie = Movie.query.get(movieId)
@@ -115,21 +124,27 @@ class Booking(db.Model):
 
     seats = relationship('CinemaHallSeat', backref='bookings')
 
+    # method to get the booking by id
     @staticmethod
     def getBookingById(bookingId: int) -> Union["Booking", None]:
         return Booking.query.get(bookingId)
     
+    # method to get all bookings in database
     @staticmethod
     def getAllBookings() -> List["Booking"]:
-        return Booking.query.order_by(desc(Booking.createdOn)).all()
+        return Booking.query.order_by(desc(Booking.createdOn)).all() # ordered from the newest booking to the oldest booking
 
+    # method to get all active bookings
     @staticmethod
     def getFilteredBookingList() -> List["Booking"]:
         return Booking.query.filter(Booking.status != BookingStatus.CANCELLED).all()
-        
+
+    # method to send notification 
     def sendNotification(self, action: str = "booked") -> Union["Notification", None]:
-        from models import User
+        from .userModel import User
         user = User.getUserById(self.userId)
+
+        # only send notifications to registered customers
         if user.type == 'customer':
 
             seatNumbers = ", ".join([seat.seatNumber for seat in self.seats])
@@ -152,7 +167,7 @@ class Booking(db.Model):
             return notification
 
 
-
+# Screening class/table
 class Screening(db.Model, ScreeningValidationMixin, BookingListFilterMixin):
     __tablename__ = 'screenings'
     
@@ -169,12 +184,16 @@ class Screening(db.Model, ScreeningValidationMixin, BookingListFilterMixin):
     hall = relationship('CinemaHall', back_populates='screenings')
     bookings = relationship('Booking', back_populates='screening')
 
+    # method to get the screening's seat chart
     def getSeatChart(self):
         allSeats = {seat.seatNumber: seat for seat in self.hall.seats}
+
+        # according to the bookings, get the reserved seats list
         reservedSeats = {seat for booking in BookingListFilterMixin.filteredBooking(self.bookings) for seat in booking.seats}
         rows = sorted(set(seat.seatRow for seat in allSeats.values()))
         maxColumns = max([seat.seatColumn for seat in allSeats.values()])
 
+        # restructure the seats to be two dimentional to fit for rendering in html
         seatMatrix = []
         for row in rows:
             seatRow = []
@@ -189,6 +208,7 @@ class Screening(db.Model, ScreeningValidationMixin, BookingListFilterMixin):
             seatMatrix.append(seatRow)
         return seatMatrix
     
+    # method to get active screening by id
     @staticmethod
     def getActiveScreeningById(screeningId: int) -> Union["Screening", None]:
         screening = Screening.query.get(screeningId)
@@ -197,11 +217,12 @@ class Screening(db.Model, ScreeningValidationMixin, BookingListFilterMixin):
         else:
             return None
         
+    # method to get any screening by id
     @staticmethod
     def getScreeningById(screeningId: int) -> Union["Screening", None]:
         return Screening.query.get(screeningId)
     
-# Define the Notification table (assuming from previous discussion)
+# Define the Notification table
 class Notification(db.Model):
     __tablename__ = 'notifications'
     
@@ -211,19 +232,22 @@ class Notification(db.Model):
     isRead = db.Column(db.Boolean, default=False)
     timestamp = db.Column(DateTime, default=datetime.utcnow)
 
+    # method to get the number of unread notifications
     @staticmethod
     def numberOfUnreadNotifications():
         return Notification.query.filter_by(isRead=False).count()
     
+    # method to get notification by id
     @staticmethod
     def getNotificationById(notificationId: int) -> 'Notification':
         return Notification.query.get(notificationId)
     
+    # method to mark the notification as read
     def markRead(self):
         self.isRead = True
         db.session.commit()
 
-
+# CinemaHall class/table
 class CinemaHall(db.Model):
     __tablename__ = 'cinemaHalls'
     
@@ -234,6 +258,7 @@ class CinemaHall(db.Model):
     seats = relationship('CinemaHallSeat', back_populates='hall')
     screenings = relationship('Screening', back_populates='hall')
 
+# CinemaHallSeat class/table
 class CinemaHallSeat(db.Model):
     __tablename__ = 'cinemaHallSeats'
     
@@ -246,10 +271,12 @@ class CinemaHallSeat(db.Model):
     bookingId = db.Column(db.Integer, db.ForeignKey('bookings.id'))
     hall = relationship('CinemaHall', back_populates='seats')
 
+    # method to get seat number (row number + column number)
     @property
     def seatNumber(self):
         return f"{self.seatRow}{self.seatColumn}"
     
+    # method to get the seat by id
     @staticmethod
     def getSeatById(seatId: int) -> "CinemaHallSeat":
         return CinemaHallSeat.query.get(seatId)

@@ -1,70 +1,67 @@
-
 {% extends 'base.html' %}
 
 {% block title %}My bookings{% endblock %}
 
 {% block content %}
 
-    <div class="container mx-auto mt-20 p-6 bg-white rounded shadow-md">
-        <h2 class="text-2xl mb-4">Add a New Movie</h2>
+<div class="container mx-auto mt-20 p-8 w-2/5 bg-white rounded-lg shadow-xl">
+    <h2 class="text-3xl mb-6 font-semibold text-center text-gray-800">Add a New Movie</h2>
 
-        <form action="{{ url_for('movies.addMovie') }}" method="post" class="space-y-4">
-            <div class="flex flex-wrap">
-                <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="title">
-                        Movie Title
-                    </label>
-                    <input name="title" id="title" type="text" required class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
-                </div>
-                <div class="w-full md:w-1/2 px-3">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="language">
-                        Language
-                    </label>
-                    <input name="language" id="language" type="text" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white">
-                </div>
+    <form action="{{ url_for('movies.addMovie') }}" method="post" enctype="multipart/form-data" class="space-y-6">
+
+        <!-- Movie Title -->
+        <div class="w-full px-3 mb-4">
+            <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="title">Movie Title</label>
+            <input name="title" id="title" type="text" required class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+
+        <!-- Genre -->
+        <div class="w-full px-3 mb-4">
+            <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="genre">Genre</label>
+            <input name="genre" id="genre" type="text" required class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+
+        <!-- Language, Release Date -->
+        <div class="flex flex-wrap -mx-3 mb-4">
+            <div class="w-full md:w-1/2 px-3 mb-4 md:mb-0">
+                <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="language">Language</label>
+                <input name="language" id="language" type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
             </div>
-
-            <div class="flex flex-wrap">
-                <div class="w-full md:w-1/2 px-3">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="genre">
-                        Genre
-                    </label>
-                    <input name="genre" id="genre" type="text" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white">
-                </div>
-                <div class="w-full md:w-1/2 px-3">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="releaseDate">
-                        Release Date
-                    </label>
-                    <input name="releaseDate" id="releaseDate" type="date" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white">
-                </div>
+            <div class="w-full md:w-1/2 px-3 mb-4 md:mb-0">
+                <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="releaseDate">Release Date</label>
+                <input name="releaseDate" id="releaseDate" type="date" class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
             </div>
+        </div>
 
-            <div class="flex flex-wrap">
-                <div class="w-full md:w-1/2 px-3">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="durationMins">
-                        Duration (Mins)
-                    </label>
-                    <input name="durationMins" id="durationMins" type="number" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white">
-                </div>
-                <div class="w-full md:w-1/2 px-3">
-                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="country">
-                        Country
-                    </label>
-                    <input name="country" id="country" type="text" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white">
-                </div>
+        <!-- Duration, Country -->
+        <div class="flex flex-wrap -mx-3 mb-4">
+            <div class="w-full md:w-1/2 px-3 mb-4 md:mb-0">
+                <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="durationMins">Duration (Mins)</label>
+                <input name="durationMins" id="durationMins" type="number" class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
             </div>
-
-            <div>
-                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="description">
-                    Description
-                </label>
-                <textarea name="description" id="description" rows="4" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"></textarea>
+            <div class="w-full md:w-1/2 px-3">
+                <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="country">Country</label>
+                <input name="country" id="country" type="text" class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
             </div>
+        </div>
 
-            <button type="submit" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Add Movie
-            </button>
-        </form>
-    </div>
+        <!-- Description -->
+        <div class="w-full px-3 mb-4">
+            <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="description">Description</label>
+            <textarea name="description" id="description" rows="4" class="appearance-none block w-full bg-gray-100 text-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"></textarea>
+        </div>
+
+        <!-- Poster Upload -->
+        <div class="w-full px-3 mb-4">
+            <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2" for="poster">Movie Poster</label>
+            <input name="poster" id="poster" type="file" required class="appearance-none block w-full bg-gray-100 text-gray-700 py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+
+        <button type="submit" class="mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            Add Movie
+        </button>
+    </form>
+</div>
 
 {% endblock %}
+

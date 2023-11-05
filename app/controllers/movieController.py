@@ -5,12 +5,16 @@ from typing import List
 from datetime import datetime
 from collections import defaultdict
 
+# MovieController class
 class MovieController:
+
+    # method to browser all movies
     @staticmethod
     def browseMovies():
         allMovies = General.getAllMovies()
         return render_template("index.html", allMovies=allMovies)
     
+    # method to search movies
     @staticmethod
     def searchMovies(criteria: str, value: str):
         if criteria == "title":
@@ -24,6 +28,7 @@ class MovieController:
             print(filteredMovies)
         return render_template("index.html", allMovies=filteredMovies)
 
+    # method to view movie details and it's screenings schedules
     @staticmethod
     def viewMovieDetailsAndScreenings(movieId: int):
         movie = Movie.getActiveMovieById(movieId)
@@ -44,29 +49,36 @@ class MovieController:
         else:
             flash("Movie does not exist or has been cancelled.", 'error')
             return redirect(url_for('movies.showMovies'))
-        
+
+    # method to view seat chart of the screening  
     @staticmethod
     def viewSeatChart(screeningId: int):
+        # get the screening by id
         screening = Screening.getActiveScreeningById(screeningId)
         if screening:
+            # get the screening's seat chart
             seatMatrix = screening.getSeatChart()
             return render_template("seatChart.html", seatMatrix=seatMatrix, screeningId=screeningId)
         else:
             return "Screening not found", 404
-        
+
+    # method to display the payment online page (for customer booking online)
     @staticmethod
     def showPaymentPageOnline(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("paymentOnline.html", booking=booking)
     
+    # method to display the payment onsite page (for staff booking onsite)
     @staticmethod
     def showPaymentPageOnsite(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("paymentOnsite.html", booking=booking)
 
+    # method to process booking and payment
     @staticmethod
     def processBooking(userId: int, screeningId: int = None, selectedSeatIds: List[str] = None, paymentData = None):
         user = User.getUserById(userId)
+        # if passed data is about selected seats, make the booking
         if selectedSeatIds:
             selectedSeats = []
             seatIdString = selectedSeatIds[0].split(',')
@@ -86,19 +98,29 @@ class MovieController:
             booking.seats = selectedSeats
 
             if user.type == 'customer':
-                user.makeBooking(booking)
-                # print(booking.id)
-                return redirect(url_for('movies.paymentOnline', bookingId = booking.id))
+                success, message = user.makeBooking(booking)
+                # if booking is successful, redirect to the payment page
+                if success:
+                    return redirect(url_for('movies.paymentOnline', bookingId = booking.id))
+                else:
+                    flash(message, 'error')
+                    return redirect(url_for('movies.selectSeats', screeningId = screeningId))
             elif user.type == 'staff':
-                user.makeBooking(booking)
-                # print(booking.id)
-                return redirect(url_for('movies.paymentOnsite', bookingId = booking.id))
+                success, message = user.makeBooking(booking)
+                # if booking is successful, redirect to the payment page
+                if success:
+                    return redirect(url_for('movies.paymentOnsite', bookingId = booking.id))
+                else:
+                    flash(message, 'error')
+                    return redirect(url_for('movies.selectSeats', screeningId = screeningId))
             
+        # if passed data is payment data, make the payment
         elif paymentData:
             booking = Booking.getBookingById(paymentData['bookingId'])
             if not booking:
                 return "Booking not found", 404
             
+            # based on different payment methods, create different payment objects
             if paymentData['paymentMethod'] == 'creditcard':
                 payment = CreditCard(
                     originalAmount=booking.orderTotal,
@@ -145,18 +167,25 @@ class MovieController:
             else:
                 return "Invalid payment method", 400
             
+            # check if coupon code is valid, append it to the payment object
             if Coupon.couponIsValid(paymentData['couponCode']):
                 coupon = Coupon.getCouponByCode(paymentData['couponCode'])
                 payment.couponId = coupon.id
                 payment.coupon = coupon
 
-            Payment.createPayment(payment)
-                
-            return redirect(url_for('movies.confirmBooking', bookingId = booking.id))
+            # make the payment
+            success, message = Payment.createPayment(payment)
+            if success:
+                flash(message, 'success')   
+                return redirect(url_for('movies.confirmBooking', bookingId = booking.id))
+            else:
+                flash(message, 'error')
+                return redirect(url_for('movies.viewBookings'))
 
         else:
             return "Invalid booking data", 400
         
+    # method to validate the coupon code
     @staticmethod
     def validateCouponCode(couponCode: str):
         if Coupon.couponIsValid(couponCode):
@@ -164,17 +193,19 @@ class MovieController:
             return jsonify(valid=True, discount=coupon.discount)
         else:
             return jsonify(valid=False, discount=0)
-        
+
+    # method to display booking confirmation page   
     @staticmethod
     def confirmBooking(bookingId: int):
         booking = Booking.getBookingById(bookingId)
         return render_template("bookingConfirm.html", booking=booking)
     
+    # method to get user's notification list
     @staticmethod
     def getNotifications(userId: int):
         user = User.getUserById(userId)
         if user and user.type == 'customer':
-            notificationList = Notification.query.filter_by(userId=userId).order_by(desc(Notification.timestamp)).all()
+            notificationList = Notification.query.filter_by(userId=userId).order_by(desc(Notification.timestamp)).all() # ordered by timestamp with newest notification first
             numberOfUnreadNotifications = Notification.numberOfUnreadNotifications()
             # Convert the list of notifications into a list of dictionaries
             notifications = [
@@ -188,6 +219,7 @@ class MovieController:
             ]
             return jsonify(numberOfUnreadNotifications=numberOfUnreadNotifications, notifications=notifications)
         
+    # method to mark a notification as read
     @staticmethod
     def markNotificationRead(notificationId: int):
         notification = Notification.getNotificationById(notificationId)
@@ -196,16 +228,17 @@ class MovieController:
             return jsonify(success=True)
         return jsonify(success=False)
 
+    # method to view the booking list
     @staticmethod
     def viewBookings(userId: int):
         user = User.getUserById(userId)
         if user.type == "customer":
-            # notificationList = Notification.query.filter_by(userId=userId).order_by(desc(Notification.timestamp)).all()
             bookingList = user.getBookingList()
         if user.type == "staff":
             bookingList = Booking.getAllBookings()
         return render_template('bookings.html', bookingList=bookingList)
             
+    # method to cancel a booking
     @staticmethod
     def cancelBooking(userId: int, bookingId: int):
         booking = Booking.getBookingById(bookingId)
@@ -221,11 +254,12 @@ class MovieController:
             flash("Unauthorized access", 'error')
             return redirect(url_for('movies.viewBookings'))
 
-
+    # method to show add movie page
     @staticmethod
     def showAddMoviePage():
         return render_template('addMovie.html')
     
+    # method to add movie
     @staticmethod
     def addMovie(userId: int, newMovieData: dict):
         user = User.getUserById(userId)
@@ -246,7 +280,7 @@ class MovieController:
             flash(message, 'error')
             return redirect(url_for('movies.addMovie'))
        
-    
+    # method to add screening to a movie
     @staticmethod
     def addScreening(userId: int, newScreeningData: dict):
         user = User.getUserById(userId)
@@ -264,12 +298,14 @@ class MovieController:
         else:
             flash(message, 'error')
         return redirect(url_for('movies.showMovieDetailsAndScreenings', movieId = newScreeningData['movieId']))
-        
+    
+    # method to show cancel movie page
     @staticmethod
     def showCancelMoviePage():
         movies = Movie.query.all()
         return render_template("cancelMovie.html", movies=movies)
         
+    # method to cancel a movie
     @staticmethod
     def cancelMovie(userId: int, movieId: int):
         user = User.getUserById(userId)
@@ -286,7 +322,7 @@ class MovieController:
             flash("Movie not found", 'error')
             return redirect(url_for('movies.cancelMovie'))
 
-        
+    # method to cancel a screening
     @staticmethod
     def cancelScreening(userId: int, screeningId: int):
         user = User.getUserById(userId)
